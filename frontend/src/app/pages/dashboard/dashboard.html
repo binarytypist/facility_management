@@ -1,0 +1,759 @@
+<div class="p-6 h-full flex flex-col">
+  <!-- Location Breadcrumb or Banner -->
+  @if (selectedLocation()) {
+    <div
+      class="bg-indigo-950/40 border border-indigo-800/50 px-4 py-3 rounded-xl mb-6 flex items-center justify-between"
+    >
+      <div class="flex items-center space-x-2 text-sm text-slate-300">
+        <span class="text-indigo-400">Filtering Location:</span>
+        <span class="font-semibold text-indigo-300">{{ selectedLocation()?.name }}</span>
+        <span
+          class="px-2 py-0.5 bg-indigo-900/60 border border-indigo-800/80 rounded-md text-[10px] font-bold uppercase text-indigo-400"
+        >
+          {{ selectedLocation()?.type }}
+        </span>
+      </div>
+      <button
+        (click)="selectLocation(null)"
+        class="text-xs text-indigo-400 hover:text-indigo-300 font-semibold"
+      >
+        Clear Filter
+      </button>
+    </div>
+  }
+
+  <!-- Metrics / Analytics Ribbon -->
+  <section class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-6">
+    <!-- Card 1: Active Tasks -->
+    <div
+      class="bg-slate-950/50 border border-slate-800/60 rounded-2xl p-5 hover:border-slate-700/80 transition-all hover:shadow-lg hover:shadow-slate-950/40 group relative overflow-hidden"
+    >
+      <div
+        class="absolute right-0 top-0 w-24 h-24 bg-indigo-500/5 rounded-bl-full group-hover:bg-indigo-500/10 transition-colors"
+      ></div>
+      <div class="flex justify-between items-start mb-3">
+        <span class="text-xs font-bold text-slate-400 uppercase tracking-wider">{{
+          'ACTIVE_EVENTS' | translate
+        }}</span>
+        <span class="p-2 bg-indigo-950 text-indigo-400 border border-indigo-900 rounded-xl">
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2"
+              d="M12 6V4m0 2a2 2 0 100 4m0-4a2 2 0 110 4m-6 8a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4m6 6v10m6-2a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4"
+            ></path>
+          </svg>
+        </span>
+      </div>
+      <div class="text-3xl font-bold font-mono text-slate-100">{{ kpiStats().active }}</div>
+      <div class="text-xs text-slate-500 mt-1">Pending maintenance operations</div>
+    </div>
+
+    <!-- Card 2: Completed Tasks -->
+    <div
+      class="bg-slate-950/50 border border-slate-800/60 rounded-2xl p-5 hover:border-slate-700/80 transition-all hover:shadow-lg hover:shadow-slate-950/40 group relative overflow-hidden"
+    >
+      <div
+        class="absolute right-0 top-0 w-24 h-24 bg-emerald-500/5 rounded-bl-full group-hover:bg-emerald-500/10 transition-colors"
+      ></div>
+      <div class="flex justify-between items-start mb-3">
+        <span class="text-xs font-bold text-slate-400 uppercase tracking-wider">{{
+          'COMPLETED_TASKS' | translate
+        }}</span>
+        <span class="p-2 bg-emerald-950 text-emerald-400 border border-emerald-900 rounded-xl">
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2"
+              d="M5 13l4 4L19 7"
+            ></path>
+          </svg>
+        </span>
+      </div>
+      <div class="text-3xl font-bold font-mono text-slate-100">{{ kpiStats().completed }}</div>
+      <div class="text-xs text-slate-500 mt-1">Awaiting manager verification</div>
+    </div>
+
+    <!-- Card 3: Maintenance Costs -->
+    <div
+      class="bg-slate-950/50 border border-slate-800/60 rounded-2xl p-5 hover:border-slate-700/80 transition-all hover:shadow-lg hover:shadow-slate-950/40 group relative overflow-hidden"
+    >
+      <div
+        class="absolute right-0 top-0 w-24 h-24 bg-blue-500/5 rounded-bl-full group-hover:bg-blue-500/10 transition-colors"
+      ></div>
+      <div class="flex justify-between items-start mb-3">
+        <span class="text-xs font-bold text-slate-400 uppercase tracking-wider">{{
+          'TOTAL_EXPENSE' | translate
+        }}</span>
+        <span class="p-2 bg-blue-950 text-blue-400 border border-blue-900 rounded-xl">
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2"
+              d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M12 16V7"
+            ></path>
+          </svg>
+        </span>
+      </div>
+      <div class="text-3xl font-bold font-mono text-slate-100">
+        {{ kpiStats().totalCost | currency: 'USD' : 'symbol' : '1.2-2' }}
+      </div>
+      <div class="text-xs text-slate-500 mt-1">Material & labor cost accumulated</div>
+    </div>
+
+    <!-- Card 4: Scheduled vs Unscheduled -->
+    <div
+      class="bg-slate-950/50 border border-slate-800/60 rounded-2xl p-5 hover:border-slate-700/80 transition-all hover:shadow-lg hover:shadow-slate-950/40 group relative overflow-hidden"
+    >
+      <div
+        class="absolute right-0 top-0 w-24 h-24 bg-amber-500/5 rounded-bl-full group-hover:bg-amber-500/10 transition-colors"
+      ></div>
+      <div class="flex justify-between items-start mb-3">
+        <span class="text-xs font-bold text-slate-400 uppercase tracking-wider">{{
+          'PLAN_VS_REACTIVE' | translate
+        }}</span>
+        <span class="p-2 bg-amber-950 text-amber-400 border border-amber-900 rounded-xl">
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2"
+              d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"
+            ></path>
+          </svg>
+        </span>
+      </div>
+      <div class="text-2xl font-bold text-slate-100 flex items-baseline space-x-1.5 mt-1">
+        <span class="text-3xl font-mono">{{ getScheduledPercentage() }}%</span>
+        <span class="text-xs text-slate-400 font-normal">{{ 'PLANNED' | translate }}</span>
+      </div>
+      <div class="text-xs text-slate-500 mt-1">Scheduled / Total event counts</div>
+    </div>
+  </section>
+
+  <!-- Advanced Filters Panel -->
+  <section class="bg-slate-950/40 border border-slate-800/70 p-5 rounded-2xl mb-6">
+    <div class="flex items-center justify-between mb-3">
+      <span class="text-xs font-bold text-slate-400 uppercase tracking-wider">{{
+        'FILTER_OPERATIONS' | translate
+      }}</span>
+      <button
+        (click)="clearAllFilters()"
+        class="text-xs font-semibold text-slate-500 hover:text-indigo-400 transition-colors"
+      >
+        {{ 'CLEAR_ALL' | translate }}
+      </button>
+    </div>
+    <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+      <!-- Priority Filter -->
+      <div>
+        <label class="block text-xs font-semibold text-slate-500 mb-1">{{
+          'PRIORITY' | translate
+        }}</label>
+        <select
+          [ngModel]="priorityFilter()"
+          (ngModelChange)="priorityFilter.set($event); loadWorkEvents(); loadStats()"
+          class="w-full bg-slate-900 border border-slate-800 rounded-xl px-3 py-1.5 text-xs text-slate-300 focus:outline-none focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 transition-colors"
+        >
+          <option value="">{{ 'ALL_PRIORITIES' | translate }}</option>
+          <option value="low">Low</option>
+          <option value="medium">Medium</option>
+          <option value="high">High</option>
+          <option value="critical">Critical</option>
+        </select>
+      </div>
+
+      <!-- Service Category Filter -->
+      <div>
+        <label class="block text-xs font-semibold text-slate-500 mb-1">{{
+          'SERVICE_CATEGORY' | translate
+        }}</label>
+        <select
+          [ngModel]="categoryFilter()"
+          (ngModelChange)="categoryFilter.set($event); loadWorkEvents(); loadStats()"
+          class="w-full bg-slate-900 border border-slate-800 rounded-xl px-3 py-1.5 text-xs text-slate-300 focus:outline-none focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 transition-colors"
+        >
+          <option value="">{{ 'ALL_CATEGORIES' | translate }}</option>
+          @for (cat of categories(); track cat) {
+            <option [value]="cat.id">{{ cat.name }}</option>
+          }
+        </select>
+      </div>
+
+      <!-- Schedule Type Filter -->
+      <div>
+        <label class="block text-xs font-semibold text-slate-500 mb-1">{{
+          'SCHEDULE_TYPE' | translate
+        }}</label>
+        <select
+          [ngModel]="scheduleFilter()"
+          (ngModelChange)="scheduleFilter.set($event); loadWorkEvents(); loadStats()"
+          class="w-full bg-slate-900 border border-slate-800 rounded-xl px-3 py-1.5 text-xs text-slate-300 focus:outline-none focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 transition-colors"
+        >
+          <option value="">{{ 'ALL_SCHEDULES' | translate }}</option>
+          <option value="scheduled">Scheduled Work</option>
+          <option value="unscheduled">Reactive / Unscheduled</option>
+        </select>
+      </div>
+
+      <!-- Status Filter -->
+      <div>
+        <label class="block text-xs font-semibold text-slate-500 mb-1">{{
+          'WORKFLOW_STATUS' | translate
+        }}</label>
+        <select
+          [ngModel]="statusFilter()"
+          (ngModelChange)="statusFilter.set($event); loadWorkEvents(); loadStats()"
+          class="w-full bg-slate-900 border border-slate-800 rounded-xl px-3 py-1.5 text-xs text-slate-300 focus:outline-none focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 transition-colors"
+        >
+          <option value="">{{ 'ALL_STATUSES' | translate }}</option>
+          <option value="created">Created</option>
+          <option value="assigned">Assigned</option>
+          <option value="in_progress">In Progress</option>
+          <option value="completed">Completed</option>
+          <option value="closed">Closed</option>
+        </select>
+      </div>
+    </div>
+  </section>
+
+  <!-- Tab Content Area -->
+  <div class="flex-1 min-h-[400px]">
+    <!-- Event Sub-Navigation -->
+    @if (activeTab() === 'event') {
+      <div class="flex space-x-2 mb-4 bg-slate-900/50 p-1 rounded-xl w-max border border-slate-800">
+        <button
+          (click)="activeEventSubTab.set('kanban')"
+          [class.bg-slate-800]="activeEventSubTab() === 'kanban'"
+          [class.text-indigo-400]="activeEventSubTab() === 'kanban'"
+          [class.text-slate-400]="activeEventSubTab() !== 'kanban'"
+          class="px-4 py-1.5 text-xs font-semibold rounded-lg transition-all"
+        >
+          {{ 'TAB_KANBAN' | translate }}
+        </button>
+        <button
+          (click)="activeEventSubTab.set('calendar')"
+          [class.bg-slate-800]="activeEventSubTab() === 'calendar'"
+          [class.text-indigo-400]="activeEventSubTab() === 'calendar'"
+          [class.text-slate-400]="activeEventSubTab() !== 'calendar'"
+          class="px-4 py-1.5 text-xs font-semibold rounded-lg transition-all"
+        >
+          {{ 'TAB_CALENDAR' | translate }}
+        </button>
+        <button
+          (click)="activeEventSubTab.set('workitems')"
+          [class.bg-slate-800]="activeEventSubTab() === 'workitems'"
+          [class.text-indigo-400]="activeEventSubTab() === 'workitems'"
+          [class.text-slate-400]="activeEventSubTab() !== 'workitems'"
+          class="px-4 py-1.5 text-xs font-semibold rounded-lg transition-all"
+        >
+          {{ 'TAB_WORK_ITEMS' | translate }}
+        </button>
+        <button
+          (click)="activeEventSubTab.set('analytics')"
+          [class.bg-slate-800]="activeEventSubTab() === 'analytics'"
+          [class.text-indigo-400]="activeEventSubTab() === 'analytics'"
+          [class.text-slate-400]="activeEventSubTab() !== 'analytics'"
+          class="px-4 py-1.5 text-xs font-semibold rounded-lg transition-all"
+        >
+          {{ 'TAB_ANALYTICS' | translate }}
+        </button>
+      </div>
+    }
+
+    <!-- 1. KANBAN BOARD VIEW -->
+    @if (activeTab() === 'event' && activeEventSubTab() === 'kanban') {
+      <div class="grid grid-cols-1 md:grid-cols-5 gap-4 h-full">
+        <!-- Col 1: Created -->
+        <ng-container
+          *ngTemplateOutlet="
+            kanbanCol;
+            context: { title: 'Created', status: 'created', bg: 'bg-slate-950/40' }
+          "
+        ></ng-container>
+        <!-- Col 2: Assigned -->
+        <ng-container
+          *ngTemplateOutlet="
+            kanbanCol;
+            context: { title: 'Assigned', status: 'assigned', bg: 'bg-slate-950/40' }
+          "
+        ></ng-container>
+        <!-- Col 3: In Progress -->
+        <ng-container
+          *ngTemplateOutlet="
+            kanbanCol;
+            context: { title: 'In Progress', status: 'in_progress', bg: 'bg-indigo-950/10' }
+          "
+        ></ng-container>
+        <!-- Col 4: Completed -->
+        <ng-container
+          *ngTemplateOutlet="
+            kanbanCol;
+            context: { title: 'Completed', status: 'completed', bg: 'bg-emerald-950/10' }
+          "
+        ></ng-container>
+        <!-- Col 5: Closed -->
+        <ng-container
+          *ngTemplateOutlet="
+            kanbanCol;
+            context: { title: 'Closed', status: 'closed', bg: 'bg-slate-950/40' }
+          "
+        ></ng-container>
+      </div>
+    }
+
+    <ng-template #kanbanCol let-title="title" let-status="status" let-bg="bg">
+      <div class="flex flex-col {{ bg }} border border-slate-800/80 rounded-2xl p-4 min-h-[450px]">
+        <div class="flex items-center justify-between mb-3 pb-2 border-b border-slate-800/50">
+          <span
+            class="text-xs font-bold text-slate-300 uppercase tracking-wide flex items-center space-x-1.5"
+          >
+            <span
+              class="w-1.5 h-1.5 rounded-full"
+              [class.bg-indigo-400]="status === 'created' || status === 'assigned'"
+              [class.bg-blue-400]="status === 'in_progress'"
+              [class.bg-emerald-400]="status === 'completed'"
+              [class.bg-slate-600]="status === 'closed'"
+            ></span>
+            <span>{{ title }}</span>
+          </span>
+          <span
+            class="px-2 py-0.5 bg-slate-800 text-slate-400 text-[10px] font-bold rounded-full font-mono"
+          >
+            {{ getEventsByStatus(status).length }}
+          </span>
+        </div>
+
+        <!-- Scrollable Cards list -->
+        <div class="flex-1 space-y-3 overflow-y-auto">
+          @for (event of getEventsByStatus(status); track event) {
+            <div
+              (click)="viewEventDetails(event.id)"
+              class="bg-slate-900 border border-slate-800/70 p-4 rounded-xl hover:border-slate-700/90 active:scale-[0.99] cursor-pointer transition-all hover:-translate-y-0.5 shadow-sm group"
+            >
+              <!-- Priority Tag -->
+              <div class="flex items-center justify-between mb-2">
+                <span
+                  class="px-2 py-0.5 text-[9px] font-extrabold rounded-md uppercase tracking-wider"
+                  [class.bg-slate-800]="event.priority === 'low'"
+                  [class.text-slate-400]="event.priority === 'low'"
+                  [class.bg-blue-950]="event.priority === 'medium'"
+                  [class.text-blue-400]="event.priority === 'medium'"
+                  [class.bg-amber-950]="event.priority === 'high'"
+                  [class.text-amber-400]="event.priority === 'high'"
+                  [class.bg-red-950]="event.priority === 'critical'"
+                  [class.text-red-400]="event.priority === 'critical'"
+                >
+                  {{ event.priority }}
+                </span>
+                <span class="text-[10px] font-bold text-slate-500 uppercase tracking-wide">
+                  {{ event.schedule_type }}
+                </span>
+              </div>
+              <!-- Event Title -->
+              <h4
+                class="text-xs font-semibold text-slate-200 group-hover:text-indigo-400 transition-colors line-clamp-2 leading-snug mb-2"
+              >
+                {{ event.title }}
+              </h4>
+              <!-- Location breadcrumb -->
+              <div class="text-[10px] text-slate-500 mb-3 truncate flex items-center space-x-1">
+                <span>📍</span>
+                <span class="truncate">{{ event.location_name }}</span>
+              </div>
+              <!-- Assigned team name -->
+              <div
+                class="flex items-center justify-between border-t border-slate-800/50 pt-2 text-[10px] text-slate-400"
+              >
+                <span class="truncate font-medium text-slate-500">
+                  {{ event.assigned_team_name || 'Unassigned' }}
+                </span>
+                <!-- Checklist indicator -->
+                @if (event.checklist && event.checklist.length > 0) {
+                  <span
+                    class="px-1.5 py-0.5 bg-slate-800 text-slate-400 font-bold rounded-md font-mono text-[9px]"
+                  >
+                    📝 {{ getChecklistPercentage(event) }}%
+                  </span>
+                }
+              </div>
+              <!-- Fast Actions button inside cards (role-gated) -->
+              <div class="flex justify-end space-x-1.5 mt-3 pt-2 border-t border-slate-800/30">
+                @if ((status === 'created' || status === 'assigned') && can('start_work')) {
+                  <button
+                    (click)="$event.stopPropagation(); updateEventStatus(event, 'in_progress')"
+                    class="px-2 py-1 bg-indigo-950 hover:bg-indigo-900 border border-indigo-900 text-[10px] font-semibold text-indigo-400 rounded-md transition-colors"
+                  >
+                    Start Work
+                  </button>
+                }
+                @if (status === 'in_progress' && can('complete_work')) {
+                  <button
+                    (click)="
+                      $event.stopPropagation(); selectedEvent.set(event); openCompleteModal()
+                    "
+                    class="px-2 py-1 bg-emerald-950 hover:bg-emerald-900 border border-emerald-900 text-[10px] font-semibold text-emerald-400 rounded-md transition-colors"
+                  >
+                    Complete Result
+                  </button>
+                }
+              </div>
+            </div>
+          }
+
+          <!-- Empty state card column -->
+          @if (getEventsByStatus(status).length === 0) {
+            <div
+              class="h-28 border border-dashed border-slate-800/60 rounded-xl flex items-center justify-center text-slate-600 text-xs"
+            >
+              {{ 'NO_TASKS' | translate }}
+            </div>
+          }
+        </div>
+      </div>
+    </ng-template>
+
+    <!-- Removed TABLE LIST VIEW as per user request to separate into /facility/list -->
+
+    <!-- 3. CALENDAR VIEW -->
+    @if (activeTab() === 'event' && activeEventSubTab() === 'calendar') {
+      <div class="space-y-4">
+        <!-- Calendar Header -->
+        <div
+          class="flex items-center justify-between bg-slate-950/40 border border-slate-800/70 rounded-2xl p-4"
+        >
+          <button
+            (click)="prevMonth()"
+            class="p-2 hover:bg-slate-800 text-slate-400 hover:text-slate-200 rounded-xl transition-colors"
+          >
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M15 19l-7-7 7-7"
+              ></path>
+            </svg>
+          </button>
+          <h3 class="text-lg font-bold text-slate-200 tracking-tight">{{ getMonthLabel() }}</h3>
+          <button
+            (click)="nextMonth()"
+            class="p-2 hover:bg-slate-800 text-slate-400 hover:text-slate-200 rounded-xl transition-colors"
+          >
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M9 5l7 7-7 7"
+              ></path>
+            </svg>
+          </button>
+        </div>
+        <!-- Calendar Grid -->
+        <div class="bg-slate-950/30 border border-slate-800/80 rounded-2xl overflow-hidden">
+          <!-- Weekday headers -->
+          <div class="grid grid-cols-7 border-b border-slate-800">
+            @for (day of getCalendarWeekdays(); track day) {
+              <div
+                class="py-3 text-center text-[10px] font-bold text-slate-400 uppercase tracking-widest bg-slate-950/60"
+              >
+                {{ day }}
+              </div>
+            }
+          </div>
+          <!-- Calendar day cells -->
+          <div class="grid grid-cols-7">
+            @for (day of calendarDays(); track day) {
+              <div
+                class="min-h-[100px] border-r border-b border-slate-800/40 p-2 transition-colors cursor-pointer hover:bg-slate-800/20"
+                [class.bg-slate-950/60]="!day.isCurrentMonth"
+                [class.opacity-40]="!day.isCurrentMonth"
+              >
+                <!-- Day number -->
+                <div class="flex items-center justify-between mb-1">
+                  <span
+                    class="text-xs font-bold w-6 h-6 flex items-center justify-center rounded-full"
+                    [class.bg-indigo-600]="day.isToday"
+                    [class.text-white]="day.isToday"
+                    [class.text-slate-300]="!day.isToday && day.isCurrentMonth"
+                    [class.text-slate-600]="!day.isCurrentMonth"
+                  >
+                    {{ day.dayNum }}
+                  </span>
+                  @if (day.events.length > 0) {
+                    <span
+                      class="px-1.5 py-0.5 bg-indigo-950 text-indigo-400 text-[8px] font-bold rounded-full border border-indigo-900"
+                    >
+                      {{ day.events.length }}
+                    </span>
+                  }
+                </div>
+                <!-- Event tags in the day cell -->
+                <div class="space-y-1">
+                  @for (ev of day.events; track ev; let i = $index) {
+                    @if (i < 3) {
+                      <div
+                        (click)="$event.stopPropagation(); viewEventDetails(ev.id)"
+                        class="text-[9px] font-medium px-1.5 py-0.5 rounded truncate cursor-pointer hover:opacity-80 transition-opacity"
+                        [class.bg-indigo-950]="ev.status === 'created' || ev.status === 'assigned'"
+                        [class.text-indigo-300]="
+                          ev.status === 'created' || ev.status === 'assigned'
+                        "
+                        [class.bg-blue-950]="ev.status === 'in_progress'"
+                        [class.text-blue-300]="ev.status === 'in_progress'"
+                        [class.bg-emerald-950]="ev.status === 'completed'"
+                        [class.text-emerald-300]="ev.status === 'completed'"
+                        [class.bg-slate-800]="ev.status === 'closed'"
+                        [class.text-slate-400]="ev.status === 'closed'"
+                      >
+                        {{ ev.title }}
+                      </div>
+                    }
+                  }
+                  @if (day.events.length > 3) {
+                    <div class="text-[8px] text-slate-500 font-bold pl-1">
+                      +{{ day.events.length - 3 }} more
+                    </div>
+                  }
+                </div>
+              </div>
+            }
+          </div>
+        </div>
+      </div>
+    }
+
+    <!-- 4. WORK ITEMS BACKLOG (PrimeNG Table) -->
+    @if (activeTab() === 'event' && activeEventSubTab() === 'workitems') {
+      <div class="space-y-4">
+        <!-- Work Items Header -->
+        <div class="flex items-center justify-between">
+          <div>
+            <h3 class="text-sm font-bold text-slate-200 uppercase tracking-wider">
+              {{ 'WORK_ITEMS_TITLE' | translate }}
+            </h3>
+            <p class="text-[10px] text-slate-500 mt-0.5">{{ 'WORK_ITEMS_DESC' | translate }}</p>
+          </div>
+          <div class="flex space-x-2">
+            @if (can('create_work_item')) {
+              <button
+                (click)="exportWorkItems()"
+                class="px-4 py-2 bg-slate-700 hover:bg-slate-600 text-white text-xs font-semibold rounded-xl shadow-md transition-all flex items-center space-x-2"
+              >
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    stroke-width="2"
+                    d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"
+                  ></path>
+                </svg>
+                <span>{{ 'EXPORT_CSV' | translate }}</span>
+              </button>
+            }
+            @if (can('create_work_item')) {
+              <label
+                class="px-4 py-2 bg-slate-700 hover:bg-slate-600 text-white text-xs font-semibold rounded-xl shadow-md transition-all flex items-center space-x-2 cursor-pointer"
+              >
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    stroke-width="2"
+                    d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12"
+                  ></path>
+                </svg>
+                <span>{{ 'IMPORT_CSV' | translate }}</span>
+                <input
+                  type="file"
+                  accept=".csv"
+                  class="hidden"
+                  (change)="importWorkItems($event)"
+                />
+              </label>
+            }
+            @if (can('create_work_item')) {
+              <button
+                (click)="openCreateWorkItemModal()"
+                class="px-4 py-2 bg-indigo-600 hover:bg-indigo-700 text-white text-xs font-semibold rounded-xl shadow-md transition-all hover:-translate-y-0.5 flex items-center space-x-2"
+              >
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    stroke-width="2"
+                    d="M12 4v16m8-8H4"
+                  ></path>
+                </svg>
+                <span>{{ 'NEW_WORK_ITEM' | translate }}</span>
+              </button>
+            }
+          </div>
+        </div>
+        <!-- PrimeNG Responsive Table -->
+        <div class="work-items-table-container">
+          <p-table
+            [value]="workItems()"
+            [paginator]="true"
+            [rows]="10"
+            [rowsPerPageOptions]="[5, 10, 25]"
+            [showCurrentPageReport]="true"
+            currentPageReportTemplate="Showing {first} to {last} of {totalRecords} items"
+            [scrollable]="true"
+            styleClass="p-datatable-sm p-datatable-gridlines"
+            [globalFilterFields]="['title', 'facility_name', 'service_category_name']"
+          >
+            <ng-template pTemplate="header">
+              <tr>
+                <th pSortableColumn="id" style="width: 60px">ID</th>
+                <th pSortableColumn="title">Title</th>
+                <th pSortableColumn="facility_name">Facility</th>
+                <th pSortableColumn="client_name">Client</th>
+                <th pSortableColumn="service_category_name">Category</th>
+                <th pSortableColumn="work_type_name">Work Type</th>
+                <th pSortableColumn="estimated_duration" style="width: 100px">Duration</th>
+                <th style="width: 140px">Actions</th>
+              </tr>
+            </ng-template>
+            <ng-template pTemplate="body" let-item>
+              <tr>
+                <td class="font-mono text-slate-400 font-semibold">#{{ item.id }}</td>
+                <td>
+                  <div class="font-semibold text-slate-200">{{ item.title }}</div>
+                  <div class="text-[10px] text-slate-500 line-clamp-1 mt-0.5">
+                    {{ item.description || 'No description' }}
+                  </div>
+                </td>
+                <td>
+                  <span
+                    class="px-2 py-0.5 bg-slate-800/60 text-slate-300 rounded-md text-[10px] font-medium border border-slate-700/50"
+                  >
+                    {{ item.facility_name }}
+                  </span>
+                </td>
+                <td>
+                  @if (item.client_name) {
+                    <span
+                      class="px-2 py-0.5 bg-blue-900/40 text-blue-300 rounded-md text-[10px] font-medium border border-blue-800/40"
+                    >
+                      {{ item.client_name }}
+                    </span>
+                  }
+                  @if (!item.client_name) {
+                    <span class="text-[10px] text-slate-600 italic">None</span>
+                  }
+                </td>
+                <td>
+                  <span
+                    class="px-2 py-0.5 bg-indigo-950/60 text-indigo-300 rounded-md text-[10px] font-semibold border border-indigo-800/40"
+                  >
+                    {{ item.service_category_name }}
+                  </span>
+                </td>
+                <td class="text-slate-400">{{ item.work_type_name }}</td>
+                <td class="font-mono text-slate-300">{{ item.estimated_duration }}h</td>
+                <td>
+                  @if (can('schedule_work_item')) {
+                    <button
+                      (click)="openSchedulerForItem(item)"
+                      class="px-2.5 py-1 bg-indigo-950 hover:bg-indigo-900 border border-indigo-900 text-[10px] font-semibold text-indigo-400 rounded-md transition-colors"
+                    >
+                      📅 Schedule
+                    </button>
+                  }
+                </td>
+              </tr>
+            </ng-template>
+            <ng-template pTemplate="emptymessage">
+              <tr>
+                <td colspan="7" class="text-center py-8 text-slate-500">
+                  No work items in the backlog. Create one to get started.
+                </td>
+              </tr>
+            </ng-template>
+          </p-table>
+        </div>
+      </div>
+    }
+
+    <!-- 5. ANALYTICS & COST ROLLUPS VIEW -->
+    @if (activeTab() === 'event' && activeEventSubTab() === 'analytics') {
+      <div class="space-y-6">
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <!-- Cost per Service Category -->
+          <div class="bg-slate-950/40 border border-slate-800/80 rounded-2xl p-6">
+            <h3 class="text-sm font-bold text-slate-300 uppercase tracking-wider mb-4">
+              Expense breakdown by Service Category
+            </h3>
+            <div class="space-y-4">
+              @for (cat of kpiStats().costByCategory; track cat) {
+                <div class="space-y-1.5">
+                  <div class="flex items-center justify-between text-xs font-semibold">
+                    <span class="text-slate-300">{{ cat.category_name }}</span>
+                    <span class="text-indigo-400 font-mono">{{
+                      cat.total_cost | currency: 'USD' : 'symbol' : '1.2-2'
+                    }}</span>
+                  </div>
+                  <!-- Custom visual progress bar -->
+                  <div class="w-full h-2 bg-slate-800 rounded-full overflow-hidden">
+                    <div
+                      class="h-full bg-gradient-to-r from-indigo-500 to-blue-500"
+                      [style.width.%]="getCategoryCostPercent(cat.total_cost)"
+                    ></div>
+                  </div>
+                  <div class="text-[10px] text-slate-500">
+                    {{ cat.count }} completed maintenance events
+                  </div>
+                </div>
+              }
+              @if (!kpiStats().costByCategory || kpiStats().costByCategory.length === 0) {
+                <div class="text-center text-slate-600 text-xs py-8">
+                  No completed work expense logged yet.
+                </div>
+              }
+            </div>
+          </div>
+          <!-- Rolled up Costs by Site -->
+          <div class="bg-slate-950/40 border border-slate-800/80 rounded-2xl p-6">
+            <h3 class="text-sm font-bold text-slate-300 uppercase tracking-wider mb-4">
+              Total Rolled-up Cost by Property Site
+            </h3>
+            <div class="space-y-4">
+              @for (site of kpiStats().costBySite; track site) {
+                <div class="space-y-1.5">
+                  <div class="flex items-center justify-between text-xs font-semibold">
+                    <span class="text-slate-300">{{ site.site_name }}</span>
+                    <span class="text-emerald-400 font-mono">{{
+                      site.total_cost | currency: 'USD' : 'symbol' : '1.2-2'
+                    }}</span>
+                  </div>
+                  <!-- Custom visual progress bar -->
+                  <div class="w-full h-2 bg-slate-800 rounded-full overflow-hidden">
+                    <div
+                      class="h-full bg-gradient-to-r from-emerald-500 to-teal-500"
+                      [style.width.%]="getSiteCostPercent(site.total_cost)"
+                    ></div>
+                  </div>
+                  <div class="text-[10px] text-slate-500">
+                    {{ site.count }} completed events at Site
+                  </div>
+                </div>
+              }
+              @if (!kpiStats().costBySite || kpiStats().costBySite.length === 0) {
+                <div class="text-center text-slate-600 text-xs py-8">
+                  No completed work expense logged yet.
+                </div>
+              }
+            </div>
+          </div>
+        </div>
+      </div>
+    }
+
+    <!-- Removed Settings & Master Data section as per user request -->
+  </div>
+</div>

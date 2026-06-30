@@ -1,0 +1,481 @@
+<div
+  [class.light-mode]="!isDarkTheme()"
+  class="h-screen overflow-hidden bg-slate-900 text-slate-100 flex flex-col font-sans transition-colors duration-200"
+>
+  <!-- Top Navigation Bar -->
+  <header
+    class="bg-slate-950/80 border-b border-slate-800 backdrop-blur-md sticky top-0 z-40 px-6 py-4 flex items-center justify-between"
+  >
+    <div class="flex items-center space-x-3">
+      <div
+        class="w-9 h-9 rounded-xl bg-gradient-to-tr from-indigo-600 to-blue-500 flex items-center justify-center shadow-lg shadow-indigo-500/20"
+      >
+        <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            stroke-width="2"
+            d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"
+          ></path>
+        </svg>
+      </div>
+      <div>
+        <h1
+          class="text-lg font-bold tracking-tight bg-clip-text text-transparent bg-gradient-to-r from-indigo-400 to-blue-400"
+        >
+          {{ 'TITLE' | translate }}
+        </h1>
+        <p class="text-xs text-slate-400">{{ 'SUBTITLE' | translate }}</p>
+      </div>
+    </div>
+
+    <div class="flex items-center space-x-4">
+      <!-- Search Input -->
+      <div class="relative w-60">
+        <input
+          type="text"
+          [placeholder]="'SEARCH_PLACEHOLDER' | translate"
+          [ngModel]="searchQuery()"
+          (ngModelChange)="searchQuery.set($event)"
+          class="w-full pl-9 pr-4 py-2 bg-slate-800 border border-slate-700 rounded-xl text-sm text-slate-200 focus:outline-none focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 transition-all placeholder-slate-500"
+        />
+        <svg
+          class="w-4 h-4 text-slate-500 absolute left-3 top-3"
+          fill="none"
+          stroke="currentColor"
+          viewBox="0 0 24 24"
+        >
+          <path
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            stroke-width="2"
+            d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
+          ></path>
+        </svg>
+      </div>
+
+      <!-- Main Menu Navigation -->
+      <div class="flex items-center space-x-2 border-l border-slate-800 pl-4">
+        <button
+          (click)="goToTab('map')"
+          [class.text-indigo-400]="activeTab() === 'map'"
+          [class.bg-slate-800]="activeTab() === 'map'"
+          class="px-3 py-1.5 text-sm font-semibold text-slate-300 hover:text-indigo-400 hover:bg-slate-800 rounded-lg transition-colors flex items-center space-x-1"
+        >
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2"
+              d="M9 20l-5.447-2.724A1 1 0 013 16.382V5.618a1 1 0 011.447-.894L9 7m0 13l6-3m-6 3V7m6 10l4.553 2.276A1 1 0 0021 18.382V7.618a1 1 0 00-.553-.894L15 4m0 13V4m0 0L9 7"
+            ></path>
+          </svg>
+          <span>{{ 'TAB_MAP' | translate }}</span>
+        </button>
+        <!-- Event Dropdown -->
+        <div class="relative group">
+          <button
+            (click)="goToTab('event')"
+            [class.text-indigo-400]="activeTab() === 'event'"
+            [class.bg-slate-800]="activeTab() === 'event'"
+            class="px-3 py-1.5 text-sm font-semibold text-slate-300 hover:text-indigo-400 hover:bg-slate-800 rounded-lg transition-colors flex items-center space-x-1"
+          >
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M12 4v16m8-8H4"
+              ></path>
+            </svg>
+            <span>{{ 'TAB_EVENT' | translate }}</span>
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M19 9l-7 7-7-7"
+              ></path>
+            </svg>
+          </button>
+          <div
+            class="absolute left-0 mt-2 w-48 bg-slate-800 border border-slate-700 rounded-lg shadow-xl opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all z-50"
+          >
+            <div class="p-2 space-y-1">
+              <button
+                (click)="router.navigate(['/facility/list'])"
+                class="w-full text-left px-3 py-2 text-sm text-slate-300 rounded hover:bg-slate-700 hover:text-indigo-400 flex items-center space-x-2"
+              >
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    stroke-width="2"
+                    d="M4 6h16M4 12h16M4 18h7"
+                  ></path>
+                </svg>
+                <span>{{ 'MENU_EVENT_LIST' | translate }}</span>
+              </button>
+              <button
+                (click)="router.navigate(['/facility/assignment/list'])"
+                class="w-full text-left px-3 py-2 text-sm text-slate-300 rounded hover:bg-slate-700 hover:text-indigo-400 flex items-center space-x-2"
+              >
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    stroke-width="2"
+                    d="M9 5H7a2 2 0 00-2-2h10a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01"
+                  ></path>
+                </svg>
+                <span>{{ 'MENU_ASSIGNMENTS' | translate }}</span>
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Work Dropdown -->
+        <div class="relative group">
+          <button
+            (click)="goToTab('work')"
+            [class.text-indigo-400]="activeTab() === 'work'"
+            [class.bg-slate-800]="activeTab() === 'work'"
+            class="px-3 py-1.5 text-sm font-semibold text-slate-300 hover:text-indigo-400 hover:bg-slate-800 rounded-lg transition-colors flex items-center space-x-1"
+          >
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 13.255A23.931 23.931 0 0112 15c-3.183 0-6.22-.62-9-1.745M16 6V4a2 2 0 00-2-2h-4a2 2 0 00-2 2v2m4 6h.01M5 20h14a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"></path>
+            </svg>
+            <span>{{ 'TAB_WORK' | translate }}</span>
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+            </svg>
+          </button>
+          <div class="absolute left-0 mt-2 w-48 bg-slate-800 border border-slate-700 rounded-lg shadow-xl opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all z-50">
+            <div class="p-2 space-y-1">
+              <button 
+                (click)="router.navigate(['/work/item/list'])"
+                class="w-full text-left px-3 py-2 text-sm text-slate-300 rounded hover:bg-slate-700 hover:text-indigo-400 flex items-center space-x-2"
+              >
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2-2h10a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01"></path>
+                </svg>
+                <span>{{ 'MENU_WORK_ITEM' | translate }}</span>
+              </button>
+              <button class="w-full text-left px-3 py-2 text-sm text-slate-300 rounded hover:bg-slate-700 hover:text-indigo-400 flex items-center space-x-2">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
+                </svg>
+                <span>{{ 'MENU_WORK_EVENT' | translate }}</span>
+              </button>
+              <button class="w-full text-left px-3 py-2 text-sm text-slate-300 rounded hover:bg-slate-700 hover:text-indigo-400 flex items-center space-x-2">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                </svg>
+                <span>{{ 'MENU_WORK_RESULT' | translate }}</span>
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Settings Dropdown -->
+        <div class="relative group">
+          <button
+            class="px-3 py-1.5 text-sm font-semibold text-slate-300 hover:text-indigo-400 hover:bg-slate-800 rounded-lg transition-colors flex items-center space-x-1"
+          >
+            <span>{{ 'MENU_SETTINGS' | translate }}</span>
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M19 9l-7 7-7-7"
+              ></path>
+            </svg>
+          </button>
+          <div
+            class="absolute right-0 mt-2 w-48 bg-slate-800 border border-slate-700 rounded-lg shadow-xl opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all z-50"
+          >
+            <div class="p-2 space-y-1">
+              <button
+                (click)="router.navigate(['/agencies/list'])"
+                class="w-full text-left px-3 py-2 text-sm text-slate-300 rounded hover:bg-slate-700 hover:text-indigo-400 flex items-center space-x-2"
+              >
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    stroke-width="2"
+                    d="M21 13.255A23.931 23.931 0 0112 15c-3.183 0-6.22-.62-9-1.745M16 6V4a2 2 0 00-2-2h-4a2 2 0 00-2 2v2m4 6h.01M5 20h14a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"
+                  ></path>
+                </svg>
+                <span>{{ 'MENU_AGENCIES' | translate }}</span>
+              </button>
+              <button
+                (click)="router.navigate(['/clients/list'])"
+                class="w-full text-left px-3 py-2 text-sm text-slate-300 rounded hover:bg-slate-700 hover:text-indigo-400 flex items-center space-x-2"
+              >
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    stroke-width="2"
+                    d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"
+                  ></path>
+                </svg>
+                <span>{{ 'MENU_CLIENTS' | translate }}</span>
+              </button>
+              <button
+                (click)="router.navigate(['/configuration/event-config'])"
+                class="w-full text-left px-3 py-2 text-sm text-slate-300 rounded hover:bg-slate-700 hover:text-indigo-400 flex items-center space-x-2"
+              >
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    stroke-width="2"
+                    d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"
+                  ></path>
+                </svg>
+                <span>{{ 'MENU_EVENT_CONFIG' | translate }}</span>
+              </button>
+              <button
+                (click)="router.navigate(['/users/list'])"
+                class="w-full text-left px-3 py-2 text-sm text-slate-300 rounded hover:bg-slate-700 hover:text-indigo-400 flex items-center space-x-2"
+              >
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    stroke-width="2"
+                    d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z"
+                  ></path>
+                </svg>
+                <span>{{ 'MENU_USERS' | translate }}</span>
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="flex items-center space-x-3 border-l border-slate-800 pl-4">
+        <!-- Theme Switcher (Icon Button) -->
+        <button
+          (click)="toggleTheme()"
+          class="p-2 bg-slate-800 hover:bg-slate-700 border border-slate-700 rounded-lg text-slate-300 transition-colors flex items-center justify-center"
+        >
+          @if (isDarkTheme()) {
+            <!-- Moon Icon for Dark Mode -->
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"
+              ></path>
+            </svg>
+          } @else {
+            <!-- Sun Icon for Light Mode -->
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z"
+              ></path>
+            </svg>
+          }
+        </button>
+
+        <!-- Globe Language Switcher -->
+        <div class="relative group">
+          <button
+            class="p-2 bg-slate-800 hover:bg-slate-700 border border-slate-700 rounded-lg text-slate-300 transition-colors flex items-center space-x-1"
+          >
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M3.055 11H5a2 2 0 012 2v1a2 2 0 002 2 2 2 0 012 2v2.945M8 3.935V5.5A2.5 2.5 0 0010.5 8h.5a2 2 0 012 2 2 2 0 104 0 2 2 0 012-2h1.064M15 20.488V18a2 2 0 012-2h3.064M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
+              ></path>
+            </svg>
+            <span class="text-xs font-bold uppercase">{{ currentLang() }}</span>
+          </button>
+          <div
+            class="absolute right-0 mt-2 w-32 bg-slate-800 border border-slate-700 rounded-lg shadow-xl opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all z-50"
+          >
+            <div class="p-1">
+              @for (lang of langOptions; track lang) {
+                <button
+                  (click)="changeLanguage(lang.value)"
+                  class="w-full text-left px-3 py-2 text-sm rounded hover:bg-slate-700"
+                  [class.text-indigo-400]="currentLang() === lang.value"
+                  [class.text-slate-300]="currentLang() !== lang.value"
+                >
+                  {{ lang.label }}
+                </button>
+              }
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- User Role Info -->
+      <div class="flex items-center space-x-2 border-l border-slate-800 pl-4">
+        <div
+          class="w-8 h-8 rounded-full flex items-center justify-center text-xs font-bold"
+          [class.bg-purple-900]="auth.role() === 'admin'"
+          [class.text-purple-300]="auth.role() === 'admin'"
+          [class.bg-blue-900]="auth.role() === 'manager'"
+          [class.text-blue-300]="auth.role() === 'manager'"
+          [class.bg-emerald-900]="auth.role() === 'editor'"
+          [class.text-emerald-300]="auth.role() === 'editor'"
+          [class.bg-slate-800]="auth.role() === 'user'"
+          [class.text-slate-400]="auth.role() === 'user'"
+        >
+          {{ auth.role().charAt(0).toUpperCase() }}
+        </div>
+        <div class="text-left hidden md:block">
+          <div class="text-xs text-slate-500">{{ 'LOGGED_IN_AS' | translate }}</div>
+          <div class="text-xs font-semibold text-slate-300 capitalize">{{ auth.role() }}</div>
+        </div>
+        <button
+          (click)="logout()"
+          [title]="'LOGOUT' | translate"
+          class="p-2 hover:bg-slate-800 text-slate-400 hover:text-red-400 rounded-lg transition-colors ml-2"
+        >
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2"
+              d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"
+            ></path>
+          </svg>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <!-- Main View Workspace -->
+  <div class="flex-1 flex overflow-hidden">
+    <!-- Left Sidebar: Location Tree Hierarchy Navigator -->
+    <aside
+      class="w-80 bg-slate-950 border-r border-slate-800/80 p-6 flex flex-col shrink-0 overflow-y-auto"
+    >
+      <div class="flex items-center justify-between mb-4">
+        <h2 class="text-xs font-bold text-slate-400 uppercase tracking-wider">
+          {{ 'HIERARCHY' | translate }}
+        </h2>
+        @if (selectedLocation()) {
+          <button
+            (click)="selectLocation(null)"
+            class="text-xs text-indigo-400 hover:text-indigo-300 font-semibold"
+          >
+            {{ 'RESET_FILTER' | translate }}
+          </button>
+        }
+      </div>
+      <p class="text-xs text-slate-500 mb-4 leading-relaxed">
+        {{ 'HIERARCHY_DESC' | translate }}
+      </p>
+
+      <!-- Custom Location Tree Navigation -->
+      <div class="flex-1 space-y-1">
+        <div class="space-y-1">
+          <!-- Recursive location tree container -->
+          <ng-container
+            *ngTemplateOutlet="nodeTemplate; context: { $implicit: locationTree() }"
+          ></ng-container>
+        </div>
+      </div>
+
+      <!-- Recursive template defined inline -->
+      <ng-template #nodeTemplate let-nodes>
+        @for (node of nodes; track node) {
+          <div class="pl-3.5 border-l border-slate-800/80 ml-2 mt-1">
+            <div
+              (click)="selectLocation(node)"
+              [class.bg-slate-800]="selectedLocation()?.id === node.id"
+              [class.border-indigo-500]="selectedLocation()?.id === node.id"
+              class="flex items-center justify-between px-2.5 py-1.5 rounded-lg border border-transparent hover:bg-slate-900 cursor-pointer transition-all group"
+            >
+              <div class="flex items-center space-x-2 truncate">
+                <!-- Expand / Collapse Arrow -->
+                @if (node.children.length > 0) {
+                  <button
+                    (click)="toggleNodeExpansion(node.id, $event)"
+                    class="p-0.5 text-slate-500 hover:text-slate-300 hover:bg-slate-800 rounded transition-colors"
+                  >
+                    <svg
+                      class="w-3 h-3 transform transition-transform"
+                      [class.rotate-90]="expandedNodes().has(node.id)"
+                      fill="none"
+                      stroke="currentColor"
+                      viewBox="0 0 24 24"
+                    >
+                      <path
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                        stroke-width="2"
+                        d="M9 5l7 7-7 7"
+                      ></path>
+                    </svg>
+                  </button>
+                } @else {
+                  <div class="w-4"></div>
+                }
+                <!-- Icon depending on location type -->
+                <span
+                  class="text-xs shrink-0 opacity-70 group-hover:opacity-100 transition-opacity"
+                >
+                  @if (node.type === 'site') {
+                    🌐
+                  } @else if (node.type === 'building') {
+                    🏢
+                  } @else if (node.type === 'floor') {
+                    🪜
+                  } @else if (node.type === 'room') {
+                    🚪
+                  } @else if (node.type === 'asset') {
+                    ⚙️
+                  }
+                </span>
+                <span
+                  [class.text-indigo-400]="selectedLocation()?.id === node.id"
+                  class="text-xs font-medium truncate text-slate-300 group-hover:text-slate-100"
+                >
+                  {{ node.name }}
+                </span>
+              </div>
+              <!-- Active Task Count pill -->
+              @if (node.taskCount && node.taskCount > 0) {
+                <span
+                  class="px-1.5 py-0.5 bg-indigo-950 text-indigo-400 border border-indigo-900 text-[10px] font-bold rounded-full ml-2"
+                >
+                  {{ node.taskCount }}
+                </span>
+              }
+            </div>
+            <!-- Child nodes container -->
+            @if (node.children.length > 0 && expandedNodes().has(node.id)) {
+              <div class="mt-1">
+                <ng-container
+                  *ngTemplateOutlet="nodeTemplate; context: { $implicit: node.children }"
+                ></ng-container>
+              </div>
+            }
+          </div>
+        }
+      </ng-template>
+    </aside>
+
+    <!-- Right Workspace Area -->
+    <div class="flex-1 flex flex-col bg-slate-900 relative h-full overflow-hidden">
+      <main class="flex-1 overflow-y-auto relative">
+        <router-outlet></router-outlet>
+      </main>
+    </div>
+  </div>
+  <app-footer class="shrink-0"></app-footer>
+</div>

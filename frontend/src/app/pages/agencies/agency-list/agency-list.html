@@ -1,0 +1,99 @@
+<div class="h-full flex flex-col p-6 bg-slate-900 text-slate-100 overflow-hidden space-y-6">
+  <div class="w-full xl:max-w-[95%] mx-auto flex-1 flex flex-col min-h-0">
+    
+    <!-- Header (Fixed) -->
+    <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 shrink-0 mb-4 border-b border-slate-800 pb-4">
+      <div>
+        <h1 class="text-3xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-indigo-400 to-blue-400">{{ 'AGENCY_TITLE' | translate }}</h1>
+        <p class="text-slate-400 mt-2 text-sm">{{ 'AGENCY_SUBTITLE' | translate }}</p>
+      </div>
+      <div class="flex flex-wrap items-center gap-3">
+        <button 
+          routerLink="/dashboard"
+          class="px-4 py-2 bg-slate-800 hover:bg-slate-700 text-slate-200 rounded-xl transition-colors font-medium text-sm border border-slate-700">
+          {{ 'AGENCY_BTN_BACK' | translate }}
+        </button>
+        <button 
+          (click)="router.navigate(['/business-types'])"
+          class="px-4 py-2 bg-slate-800 hover:bg-slate-700 text-slate-200 text-sm font-medium rounded-lg shadow-sm border border-slate-700 transition-colors flex items-center space-x-2">
+          <svg class="w-4 h-4 text-indigo-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 10h16M4 14h16M4 18h16"></path></svg>
+          <span>{{ 'AGENCY_BTN_MANAGE_CAT' | translate }}</span>
+        </button>
+        <button 
+          (click)="router.navigate(['/agencies/create'])"
+          class="px-4 py-2 bg-indigo-600 hover:bg-indigo-700 text-white text-sm font-medium rounded-lg shadow-sm transition-colors flex items-center space-x-2 shadow-lg shadow-indigo-900/20">
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path></svg>
+          <span>{{ 'AGENCY_BTN_CREATE' | translate }}</span>
+        </button>
+      </div>
+    </div>
+
+    <!-- Table Container (Flex-1) -->
+    <div class="flex-1 min-h-0 bg-slate-950 border border-slate-800 rounded-2xl overflow-hidden shadow-2xl flex flex-col">
+      <div class="flex-1 p-1">
+        <p-table 
+          [value]="agencies()" 
+          [loading]="loading()"
+          [paginator]="true" 
+          [rows]="15"
+          [rowsPerPageOptions]="[15, 25, 50]"
+          [scrollable]="true"
+          scrollHeight="flex"
+          [resizableColumns]="true"
+          columnResizeMode="expand"
+          styleClass="p-datatable-sm p-datatable-gridlines p-datatable-striped flex-1 flex flex-col"
+          [tableStyle]="{'width': '100%', 'min-width': '1000px'}"
+        >
+          <ng-template pTemplate="header">
+            <tr class="border-b border-slate-800 text-slate-400 uppercase tracking-wider font-semibold text-xs bg-slate-900">
+              <th pResizableColumn class="py-3 px-4">{{ 'AGENCY_HEADER_NAME' | translate }}</th>
+              <th pResizableColumn class="py-3 px-4">{{ 'AGENCY_HEADER_CATEGORY' | translate }}</th>
+              <th pResizableColumn class="py-3 px-4">{{ 'AGENCY_HEADER_CITY' | translate }}</th>
+              <th pResizableColumn class="py-3 px-4 text-center">{{ 'AGENCY_HEADER_EMPLOYEES' | translate }}</th>
+              <th pResizableColumn class="py-3 px-4 text-right">{{ 'AGENCY_HEADER_ACTIONS' | translate }}</th>
+            </tr>
+          </ng-template>
+          <ng-template pTemplate="body" let-agency>
+            <tr class="transition-colors text-slate-300 text-xs border-b border-slate-800/50 hover:bg-slate-800/30">
+              <td class="py-3 px-4">
+                <div class="font-medium text-slate-200">{{agency.name}}</div>
+                <div class="text-[10px] text-slate-500 mt-0.5">{{agency.address}} {{agency.postcode}}</div>
+              </td>
+              <td class="py-3 px-4">
+                <span class="px-2 py-0.5 bg-indigo-500/10 text-indigo-400 rounded-md border border-indigo-500/20 font-medium text-[10px]">
+                  {{agency.service_category_name || '-'}}
+                </span>
+              </td>
+              <td class="py-3 px-4 text-slate-400">{{agency.city || '-'}}</td>
+              <td class="py-3 px-4 text-center">
+                <div class="inline-flex items-center justify-center bg-slate-800 px-2 py-0.5 rounded-full text-slate-300 font-medium text-[10px] border border-slate-700">
+                  <svg class="w-3.5 h-3.5 mr-1 text-indigo-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"></path></svg>
+                  {{agency.employee_count || 0}}
+                </div>
+              </td>
+              <td class="py-3 px-4 text-right">
+                <button 
+                  (click)="goToEdit(agency.id)"
+                  [title]="'AGENCY_BTN_EDIT' | translate"
+                  class="p-1.5 bg-slate-800 border border-slate-700 hover:bg-indigo-600 hover:border-indigo-500 text-slate-300 hover:text-white rounded-lg transition-colors inline-flex items-center justify-center">
+                  <i class="pi pi-pencil text-xs"></i>
+                </button>
+              </td>
+            </tr>
+          </ng-template>
+          <ng-template pTemplate="emptymessage">
+            <tr>
+              <td colspan="5" class="text-center py-12 bg-slate-950/30">
+                <div class="flex flex-col items-center justify-center space-y-3">
+                  <i class="pi pi-inbox text-4xl text-slate-600"></i>
+                  <div class="text-slate-400 font-medium">{{ 'AGENCY_EMPTY' | translate }}</div>
+                </div>
+              </td>
+            </tr>
+          </ng-template>
+        </p-table>
+      </div>
+    </div>
+
+  </div>
+</div>

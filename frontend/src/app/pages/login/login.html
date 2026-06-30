@@ -1,0 +1,50 @@
+<div class="min-h-screen flex items-center justify-center bg-slate-50">
+  <div class="w-full max-w-md p-8 bg-white border border-slate-200 rounded-2xl shadow-sm text-slate-900">
+    <div class="text-center mb-8">
+      <div class="inline-flex items-center justify-center w-12 h-12 rounded-xl bg-blue-50 text-blue-600 mb-3">
+        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path>
+        </svg>
+      </div>
+      <h1 class="text-2xl font-bold tracking-tight text-slate-900">Welcome Back</h1>
+      <p class="text-sm text-slate-500 mt-1">Sign in to your Geo-Task Dashboard</p>
+    </div>
+
+    @if (errorMessage()) {
+      <div class="mb-4 p-3 bg-red-50 border border-red-200 text-red-600 text-sm rounded-xl">
+        {{ errorMessage() }}
+      </div>
+    }
+
+    <form class="space-y-4" (submit)="login(); $event.preventDefault()">
+      <div>
+        <label for="email" class="block text-sm font-medium text-slate-700 mb-1">Email Address</label>
+        <input id="email" type="email" [ngModel]="email()" (ngModelChange)="email.set($event)" name="email" class="w-full px-4 py-2.5 bg-white border border-slate-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent text-slate-900 placeholder-slate-400 transition-all duration-150" placeholder="name@company.com" required [disabled]="isLoading()" />
+      </div>
+
+      <div>
+        <div class="flex justify-between items-center mb-1">
+          <label for="password" class="block text-sm font-medium text-slate-700">Password</label>
+          <a href="#" class="text-xs text-blue-600 hover:underline">Forgot password?</a>
+        </div>
+        <input id="password" type="password" [ngModel]="password()" (ngModelChange)="password.set($event)" name="password" class="w-full px-4 py-2.5 bg-white border border-slate-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent text-slate-900 placeholder-slate-400 transition-all duration-150" placeholder="••••••••" required [disabled]="isLoading()" />
+      </div>
+
+      <button type="submit" class="w-full py-3 px-4 bg-blue-600 hover:bg-blue-700 text-white font-semibold rounded-xl transition-all duration-150 mt-6 shadow-sm flex justify-center items-center" [disabled]="isLoading()">
+        @if (isLoading()) {
+          <svg class="animate-spin -ml-1 mr-3 h-5 w-5 text-white" fill="none" viewBox="0 0 24 24">
+            <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+            <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+          </svg>
+          Signing In...
+        } @else {
+          Sign In to Dashboard
+        }
+      </button>
+    </form>
+    
+    <p class="mt-6 text-center text-sm text-slate-500">
+      Don't have an account? <a routerLink="/register" class="text-blue-600 font-medium hover:underline">Create one now</a>
+    </p>
+  </div>
+</div>

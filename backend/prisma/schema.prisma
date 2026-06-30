@@ -1,0 +1,301 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mysql"
+}
+
+model Agency {
+  id                Int              @id @default(autoincrement())
+  code              String?          @db.VarChar(50)
+  name              String           @db.VarChar(255)
+  contactInfo       String?          @map("contact_info") @db.VarChar(255)
+  address           String?          @db.Text
+  postcode          String?          @db.VarChar(20)
+  city              String?          @db.VarChar(100)
+  phone             String?          @db.VarChar(50)
+  fax               String?          @db.VarChar(50)
+  otherInfo         String?          @map("other_info") @db.Text
+  facilityId        Int?             @map("facility_id")
+  companyTypeId     Int?             @map("company_type_id")
+  numEmployees      Int?             @map("num_employees")
+  floorLevel        String?          @map("floor_level") @db.VarChar(50)
+  floorSize         String?          @map("floor_size") @db.VarChar(100)
+  hasElevator       Boolean?         @default(false) @map("has_elevator")
+  isActive          Boolean?         @default(true) @map("is_active")
+  
+  facility          Facility?        @relation(fields: [facilityId], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "agencies_ibfk_1")
+  companyType       CompanyType?     @relation(fields: [companyTypeId], references: [id], onUpdate: NoAction, map: "agencies_ibfk_2")
+  employees         AgencyEmployee[]
+  workEvents        WorkEvent[]
+
+  @@index([companyTypeId], map: "company_type_id")
+  @@index([facilityId], map: "facility_id")
+  @@map("agencies")
+}
+
+model AgencyEmployee {
+  id                Int      @id @default(autoincrement())
+  agencyId          Int      @map("agency_id")
+  firstName         String   @map("first_name") @db.VarChar(100)
+  lastName          String   @map("last_name") @db.VarChar(100)
+  mobileNumber      String?  @map("mobile_number") @db.VarChar(50)
+  otherPhone        String?  @map("other_phone") @db.VarChar(50)
+  designation       String?  @db.VarChar(100)
+  email             String?  @db.VarChar(150)
+  preferredCallTime String?  @map("preferred_call_time") @db.VarChar(50)
+  hasPrivatePhone   Boolean? @default(false) @map("has_private_phone")
+  privatePhone      String?  @map("private_phone") @db.VarChar(50)
+  privateCallTime   String?  @map("private_call_time") @db.VarChar(50)
+  
+  agency            Agency   @relation(fields: [agencyId], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "agency_employees_ibfk_1")
+  workEvents        WorkEvent[]
+
+  @@index([agencyId], map: "agency_id")
+  @@map("agency_employees")
+}
+
+model ClientEmployee {
+  id                Int      @id @default(autoincrement())
+  clientId          Int      @map("client_id")
+  firstName         String   @map("first_name") @db.VarChar(100)
+  lastName          String   @map("last_name") @db.VarChar(100)
+  mobileNumber      String?  @map("mobile_number") @db.VarChar(50)
+  designation       String?  @db.VarChar(100)
+  email             String?  @db.VarChar(150)
+  otherPhone        String?  @map("other_phone") @db.VarChar(50)
+  hasPrivatePhone   Boolean? @default(false) @map("has_private_phone")
+  privatePhone      String?  @map("private_phone") @db.VarChar(50)
+  privateCallTime   String?  @map("private_call_time") @db.VarChar(50)
+  
+  client            Client   @relation(fields: [clientId], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "client_employees_ibfk_1")
+
+  @@index([clientId], map: "client_id")
+  @@map("client_employees")
+}
+
+model Client {
+  id               Int              @id @default(autoincrement())
+  name             String           @db.VarChar(255)
+  contactInfo      String?          @map("contact_info") @db.VarChar(255)
+  facilityId       Int?             @map("facility_id")
+  address          String?          @db.Text
+  phone            String?          @db.VarChar(50)
+  fax              String?          @db.VarChar(50)
+  otherInfo        String?          @map("other_info") @db.Text
+  postcode         String?          @db.VarChar(20)
+  city             String?          @db.VarChar(100)
+  companyTypeId    Int?             @map("company_type_id")
+  numEmployees     Int?             @map("num_employees")
+  floorLevel       String?          @map("floor_level") @db.VarChar(50)
+  floorSize        String?          @map("floor_size") @db.VarChar(100)
+  hasElevator      Boolean?         @default(false) @map("has_elevator")
+  code             String?          @db.VarChar(50)
+  isActive         Boolean?         @default(true) @map("is_active")
+  
+  employees        ClientEmployee[]
+  facility         Facility?        @relation(fields: [facilityId], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "clients_ibfk_1")
+  companyType      CompanyType?     @relation(fields: [companyTypeId], references: [id], onUpdate: NoAction, map: "clients_ibfk_10")
+  workEvents       WorkEvent[]
+  workItems        WorkItem[]
+
+  @@index([companyTypeId], map: "company_type_id")
+  @@index([facilityId], map: "facility_id")
+  @@map("clients")
+}
+
+model CompanyType {
+  id       Int      @id @default(autoincrement())
+  code     String   @unique(map: "code") @db.VarChar(50)
+  name     String   @unique(map: "name") @db.VarChar(100)
+  agencies Agency[]
+  clients  Client[]
+
+  @@map("company_types")
+}
+
+model Designation {
+  id   Int    @id @default(autoincrement())
+  code String @unique(map: "code") @db.VarChar(50)
+  name String @unique(map: "name") @db.VarChar(100)
+
+  @@map("designations")
+}
+
+model Facility {
+  id             Int            @id @default(autoincrement())
+  name           String         @db.VarChar(255)
+  facilityTypeId Int            @map("facility_type_id")
+  locationId     Int            @map("location_id")
+  
+  agencies       Agency[]
+  clients        Client[]
+  facilityType   FacilityType   @relation(fields: [facilityTypeId], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "facilities_ibfk_1")
+  location       Location       @relation(fields: [locationId], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "facilities_ibfk_2")
+  workEvents     WorkEvent[]
+  workItems      WorkItem[]
+
+  @@index([facilityTypeId], map: "facility_type_id")
+  @@index([locationId], map: "location_id")
+  @@map("facilities")
+}
+
+model FacilityType {
+  id         Int        @id @default(autoincrement())
+  name       String     @unique(map: "name") @db.VarChar(100)
+  code       String     @unique(map: "code") @db.VarChar(50)
+  facilities Facility[]
+
+  @@map("facility_types")
+}
+
+model Location {
+  id          Int        @id @default(autoincrement())
+  name        String     @db.VarChar(100)
+  type        String     @db.VarChar(50)
+  parentId    Int?       @map("parent_id")
+  
+  facilities  Facility[]
+  parent      Location?  @relation("locationsTolocations", fields: [parentId], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "locations_ibfk_1")
+  children    Location[] @relation("locationsTolocations")
+  workEvents  WorkEvent[]
+
+  @@index([parentId], map: "parent_id")
+  @@map("locations")
+}
+
+model Role {
+  id          Int     @id @default(autoincrement())
+  name        String  @unique(map: "name") @db.VarChar(50)
+  code        String  @unique(map: "code") @db.VarChar(50)
+  description String? @db.Text
+  users       User[]
+
+  @@map("roles")
+}
+
+
+model Team {
+  id          Int         @id @default(autoincrement())
+  name        String      @db.VarChar(100)
+  type        String      @db.VarChar(50)
+  contactInfo String?     @map("contact_info") @db.VarChar(255)
+  workEvents  WorkEvent[]
+
+  @@map("teams")
+}
+
+model User {
+  id          Int       @id @default(autoincrement())
+  email       String?   @unique(map: "email") @db.VarChar(255)
+  password    String?   @db.VarChar(255)
+  role        String?   @default("user") @db.VarChar(50)
+  createdAt   DateTime? @default(now()) @map("created_at") @db.Timestamp(0)
+  roleId      Int?      @map("role_id")
+  isActive    Boolean?  @default(true) @map("is_active")
+  userNumber  String?   @unique(map: "user_number") @map("user_number") @db.VarChar(50)
+  firstName   String?   @map("first_name") @db.VarChar(100)
+  middleName  String?   @map("middle_name") @db.VarChar(100)
+  lastName    String?   @map("last_name") @db.VarChar(100)
+  designation String?   @db.VarChar(100)
+  jobType     String?   @map("job_type") @db.VarChar(50)
+  
+  roleRelation Role?     @relation(fields: [roleId], references: [id], onUpdate: NoAction, map: "users_ibfk_1")
+
+  @@index([roleId], map: "role_id")
+  @@map("users")
+}
+
+model WorkEvent {
+  id                Int                @id @default(autoincrement())
+  title             String             @db.VarChar(255)
+  description       String?            @db.Text
+  workTypeId        Int                @map("work_type_id")
+  locationId        Int?               @map("location_id")
+  scheduleType      String             @map("schedule_type") @db.VarChar(50)
+  structureType     String             @map("structure_type") @db.VarChar(50)
+  executionType     String             @map("execution_type") @db.VarChar(50)
+  priority          String             @db.VarChar(50)
+  status            String             @default("created") @db.VarChar(50)
+  assignedTeamId    Int?               @map("assigned_team_id")
+  checklist         String?            @db.Text
+  createdAt         DateTime?          @default(now()) @map("created_at") @db.Timestamp(0)
+  updatedAt         DateTime?          @default(now()) @map("updated_at") @db.Timestamp(0)
+  facilityId        Int?               @map("facility_id")
+  workItemId        Int?               @map("work_item_id")
+  scheduledDate     DateTime?          @map("scheduled_date") @db.Date
+  assignedAgencyId  Int?               @map("assigned_agency_id")
+  isAssigned        Int?               @default(0) @map("is_assigned") @db.TinyInt
+  clientId          Int?               @map("client_id")
+  assignedDate      DateTime?          @map("assigned_date") @db.DateTime(0)
+  assignedEmployeeId Int?              @map("assigned_employee_id")
+  
+  workType          WorkType           @relation(fields: [workTypeId], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "work_events_ibfk_2")
+  location          Location?          @relation(fields: [locationId], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "work_events_ibfk_3")
+  assignedTeam      Team?              @relation(fields: [assignedTeamId], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "work_events_ibfk_4")
+  facility          Facility?          @relation(fields: [facilityId], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "work_events_ibfk_5")
+  workItem          WorkItem?          @relation(fields: [workItemId], references: [id], onUpdate: NoAction, map: "work_events_ibfk_6")
+  assignedAgency    Agency?            @relation(fields: [assignedAgencyId], references: [id], onUpdate: NoAction, map: "work_events_ibfk_7")
+  client            Client?            @relation(fields: [clientId], references: [id], onUpdate: NoAction, map: "work_events_ibfk_8")
+  assignedEmployee  AgencyEmployee?    @relation(fields: [assignedEmployeeId], references: [id], onUpdate: NoAction, map: "work_events_ibfk_9")
+  result            WorkResult?
+
+  @@index([assignedAgencyId], map: "assigned_agency_id")
+  @@index([assignedTeamId], map: "assigned_team_id")
+  @@index([clientId], map: "client_id")
+  @@index([facilityId], map: "facility_id")
+  @@index([locationId], map: "location_id")
+  @@index([workItemId], map: "work_item_id")
+  @@index([workTypeId], map: "work_type_id")
+  @@index([assignedEmployeeId], map: "assigned_employee_id")
+  @@map("work_events")
+}
+
+model WorkItem {
+  id                Int                @id @default(autoincrement())
+  title             String             @db.VarChar(255)
+  description       String?            @db.Text
+  facilityId        Int                @map("facility_id")
+  workTypeId        Int                @map("work_type_id")
+  estimatedDuration Decimal?           @default(1.00) @map("estimated_duration") @db.Decimal(5, 2)
+  clientId          Int?               @map("client_id")
+  
+  workEvents        WorkEvent[]
+  facility          Facility           @relation(fields: [facilityId], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "work_items_ibfk_1")
+  workType          WorkType           @relation(fields: [workTypeId], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "work_items_ibfk_3")
+  client            Client?            @relation(fields: [clientId], references: [id], onUpdate: NoAction, map: "work_items_ibfk_4")
+
+  @@index([clientId], map: "client_id")
+  @@index([facilityId], map: "facility_id")
+  @@index([workTypeId], map: "work_type_id")
+  @@map("work_items")
+}
+
+model WorkResult {
+  id                Int         @id @default(autoincrement())
+  workEventId       Int         @unique(map: "work_event_id") @map("work_event_id")
+  completionDetails String?     @map("completion_details") @db.Text
+  findings          String?     @db.Text
+  materialsUsed     String?     @map("materials_used") @db.Text
+  laborHours        Decimal?    @default(0.00) @map("labor_hours") @db.Decimal(10, 2)
+  cost              Decimal?    @default(0.00) @map("cost") @db.Decimal(10, 2)
+  attachments       String?     @db.Text
+  completionDate    DateTime?   @default(now()) @map("completion_date") @db.Timestamp(0)
+  
+  workEvent         WorkEvent   @relation(fields: [workEventId], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "work_results_ibfk_1")
+
+  @@map("work_results")
+}
+
+model WorkType {
+  id                Int                 @id @default(autoincrement())
+  name              String              @unique(map: "name") @db.VarChar(100)
+  code              String              @unique(map: "code") @db.VarChar(50)
+  category          String?             @db.VarChar(50)
+  
+  workEvents        WorkEvent[]
+  workItems         WorkItem[]
+
+  @@map("work_types")
+}

@@ -1,0 +1,256 @@
+<div class="h-full bg-slate-950 text-slate-200 p-6 flex flex-col overflow-hidden">
+  <div class="w-full xl:max-w-[95%] mx-auto flex-1 flex flex-col min-h-0">
+    <!-- Header (Fixed) -->
+    <div class="mb-6 border-b border-slate-800 pb-4 shrink-0">
+      <button
+        routerLink="/agencies/list"
+        class="text-indigo-400 hover:text-indigo-300 font-medium text-sm flex items-center space-x-2 mb-4 transition-colors"
+      >
+        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            stroke-width="2"
+            d="M10 19l-7-7m0 0l7-7m-7 7h18"
+          ></path>
+        </svg>
+        <span>{{ 'AGENCY_CREATE_BACK' | translate }}</span>
+      </button>
+      <h1
+        class="text-3xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-indigo-400 to-blue-400"
+      >
+        {{ 'AGENCY_CREATE_TITLE' | translate }}
+      </h1>
+      <p class="text-slate-400 mt-2 text-sm">
+        {{ 'AGENCY_CREATE_SUBTITLE' | translate }}
+      </p>
+    </div>
+
+    <!-- Tabs Header (Disabled Employee Tab for Creation) -->
+    <div class="flex border-b border-slate-800 mb-6 space-x-8 shrink-0">
+      <button
+        class="pb-4 text-indigo-400 border-b-2 border-indigo-400 font-medium transition-colors"
+      >
+        {{ 'AGENCY_CREATE_TAB_COMPANY' | translate }}
+      </button>
+      <button
+        class="pb-4 text-slate-600 cursor-not-allowed font-medium"
+        [title]="'AGENCY_CREATE_TAB_EMPLOYEES_TOOLTIP' | translate"
+      >
+        {{ 'AGENCY_CREATE_TAB_EMPLOYEES' | translate }}
+      </button>
+    </div>
+
+    <!-- Form Card (Flex-1, Min-H-0, Flex-Col, Overflow-Hidden) -->
+    <div
+      class="bg-slate-900 border border-slate-800 rounded-2xl shadow-2xl flex-1 flex flex-col min-h-0 overflow-hidden relative"
+    >
+      <div
+        class="absolute top-0 right-0 w-64 h-64 bg-indigo-500/5 rounded-bl-full pointer-events-none"
+      ></div>
+
+      <!-- Form Body (Scrollable) -->
+      <div class="flex-1 overflow-y-auto p-6 md:p-8 z-10 relative">
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+          <!-- Column 1: Name, Code, Status -->
+          <div class="space-y-6">
+            <!-- Company Name -->
+            <div>
+              <label class="block text-xs font-bold text-slate-400 uppercase tracking-wider mb-2">
+                {{ 'AGENCY_CREATE_FIELD_NAME' | translate }} *
+              </label>
+              <input
+                type="text"
+                [(ngModel)]="name"
+                class="w-full px-4 py-2.5 text-sm bg-slate-950 border border-slate-700 rounded-xl focus:outline-none focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 text-slate-200 transition-colors"
+                [placeholder]="'AGENCY_CREATE_PLACEHOLDER_NAME' | translate"
+              />
+            </div>
+
+            <!-- Company Code -->
+            <div>
+              <label class="block text-xs font-bold text-slate-400 uppercase tracking-wider mb-2">
+                {{ 'AGENCY_CREATE_FIELD_CODE' | translate }}
+              </label>
+              <input
+                type="text"
+                [(ngModel)]="code"
+                class="w-full px-4 py-2.5 text-sm bg-slate-950 border border-slate-700 rounded-xl focus:outline-none focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 text-slate-200 transition-colors"
+                [placeholder]="'AGENCY_CREATE_PLACEHOLDER_CODE' | translate"
+              />
+            </div>
+
+            <!-- Company Status -->
+            <div>
+              <label class="block text-xs font-bold text-slate-400 uppercase tracking-wider mb-2">
+                {{ 'AGENCY_CREATE_FIELD_STATUS' | translate }}
+              </label>
+              <div class="flex flex-col space-y-2 mt-2">
+                <label class="relative inline-flex items-center cursor-pointer">
+                  <input type="checkbox" [(ngModel)]="is_active" class="sr-only peer" />
+                  <div
+                    class="w-11 h-6 bg-slate-700 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-indigo-500"
+                  ></div>
+                  <span
+                    class="ml-3 text-sm font-medium"
+                    [ngClass]="is_active ? 'text-indigo-400' : 'text-slate-500'"
+                  >
+                    {{
+                      (is_active ? 'AGENCY_CREATE_STATUS_ACTIVE' : 'AGENCY_CREATE_STATUS_INACTIVE')
+                        | translate
+                    }}
+                  </span>
+                </label>
+                <p class="text-xs text-slate-500">
+                  {{ 'AGENCY_CREATE_STATUS_DESC' | translate }}
+                </p>
+              </div>
+            </div>
+          </div>
+
+          <!-- Column 2: Service Categories, Company Phone -->
+          <div class="space-y-6">
+            <!-- Service Categories -->
+            <div>
+              <label class="block text-xs font-bold text-slate-400 uppercase tracking-wider mb-2">
+                {{ 'AGENCY_CREATE_FIELD_CATEGORIES' | translate }} *
+              </label>
+              <select
+                [(ngModel)]="service_category_id"
+                class="w-full px-4 py-2.5 text-sm bg-slate-950 border border-slate-700 rounded-xl focus:outline-none focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 text-slate-200 transition-colors"
+              >
+                <option [ngValue]="null">{{ 'AGENCY_CREATE_SELECT_CATEGORY' | translate }}</option>
+                @for (sc of serviceCategories(); track sc) {
+                  <option [value]="sc.id">{{ sc.code }} - {{ sc.name }}</option>
+                }
+              </select>
+            </div>
+
+            <!-- Company Phone -->
+            <div>
+              <label class="block text-xs font-bold text-slate-400 uppercase tracking-wider mb-2">
+                {{ 'AGENCY_CREATE_FIELD_PHONE' | translate }}
+              </label>
+              <input
+                type="text"
+                [(ngModel)]="phone"
+                class="w-full px-4 py-2.5 text-sm bg-slate-950 border border-slate-700 rounded-xl focus:outline-none focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 text-slate-200 transition-colors"
+                [placeholder]="'AGENCY_CREATE_PLACEHOLDER_PHONE' | translate"
+              />
+            </div>
+          </div>
+
+          <!-- Column 3: Address, City, Postcode -->
+          <div class="space-y-6">
+            <!-- Address -->
+            <div>
+              <label class="block text-xs font-bold text-slate-400 uppercase tracking-wider mb-2">
+                {{ 'AGENCY_CREATE_FIELD_ADDRESS' | translate }}
+              </label>
+              <input
+                type="text"
+                [(ngModel)]="address"
+                class="w-full px-4 py-2.5 text-sm bg-slate-950 border border-slate-700 rounded-xl focus:outline-none focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 text-slate-200 transition-colors"
+                [placeholder]="'AGENCY_CREATE_PLACEHOLDER_ADDRESS' | translate"
+              />
+            </div>
+
+            <!-- City -->
+            <div>
+              <label class="block text-xs font-bold text-slate-400 uppercase tracking-wider mb-2">
+                {{ 'AGENCY_CREATE_FIELD_CITY' | translate }}
+              </label>
+              <input
+                type="text"
+                [(ngModel)]="city"
+                class="w-full px-4 py-2.5 text-sm bg-slate-950 border border-slate-700 rounded-xl focus:outline-none focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 text-slate-200 transition-colors"
+                [placeholder]="'AGENCY_CREATE_PLACEHOLDER_CITY' | translate"
+              />
+            </div>
+
+            <!-- Postcode -->
+            <div>
+              <label class="block text-xs font-bold text-slate-400 uppercase tracking-wider mb-2">
+                {{ 'AGENCY_CREATE_FIELD_POSTCODE' | translate }}
+              </label>
+              <input
+                type="text"
+                [(ngModel)]="postcode"
+                maxlength="5"
+                [class.border-red-500]="postcode && !isPostcodeValid"
+                class="w-full px-4 py-2.5 text-sm bg-slate-950 border border-slate-700 rounded-xl focus:outline-none focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 text-slate-200 transition-colors"
+                [placeholder]="'AGENCY_CREATE_PLACEHOLDER_POSTCODE' | translate"
+              />
+              @if (postcode && !isPostcodeValid) {
+                <p class="text-xs text-red-400 mt-1">
+                  {{ 'AGENCY_CREATE_ERROR_POSTCODE' | translate }}
+                </p>
+              }
+            </div>
+          </div>
+
+          <!-- Full-width bottom: Other Info -->
+          <div class="col-span-1 lg:col-span-3">
+            <label class="block text-xs font-bold text-slate-400 uppercase tracking-wider mb-2">
+              {{ 'AGENCY_CREATE_FIELD_OTHER' | translate }}
+            </label>
+            <textarea
+              [(ngModel)]="other_info"
+              rows="2"
+              class="w-full px-4 py-3 text-sm bg-slate-950 border border-slate-700 rounded-xl focus:outline-none focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 text-slate-200 transition-colors"
+              [placeholder]="'AGENCY_CREATE_PLACEHOLDER_OTHER' | translate"
+            ></textarea>
+          </div>
+        </div>
+      </div>
+
+      <!-- Error Message Container (Fixed under form if present) -->
+      @if (errorMessage()) {
+        <div class="p-4 bg-red-900/30 border-t border-b border-red-800 shrink-0 z-10 relative">
+          <p class="text-sm text-red-400 font-medium">{{ errorMessage() | translate }}</p>
+        </div>
+      }
+
+      <!-- Actions (Fixed Footer) -->
+      <div
+        class="flex justify-end space-x-4 p-6 border-t border-slate-800 shrink-0 bg-slate-900/90 backdrop-blur-md z-10 relative"
+      >
+        <button
+          routerLink="/agencies/list"
+          class="px-6 py-2.5 bg-slate-800 hover:bg-slate-700 text-slate-300 font-semibold rounded-xl transition-colors text-sm"
+        >
+          {{ 'CREATE_EVENT_BTN_CANCEL' | translate }}
+        </button>
+        <button
+          (click)="save()"
+          [disabled]="saving() || !isFormValid"
+          class="px-6 py-2.5 bg-indigo-600 hover:bg-indigo-500 disabled:opacity-50 text-white font-semibold rounded-xl shadow-lg shadow-indigo-900/20 transition-all text-sm flex items-center"
+        >
+          @if (saving()) {
+            <svg
+              class="animate-spin -ml-1 mr-3 h-5 w-5 text-white"
+              xmlns="http://www.w3.org/2000/svg"
+              fill="none"
+              viewBox="0 0 24 24"
+            >
+              <circle
+                class="opacity-25"
+                cx="12"
+                cy="12"
+                r="10"
+                stroke="currentColor"
+                stroke-width="4"
+              ></circle>
+              <path
+                class="opacity-75"
+                fill="currentColor"
+                d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+              ></path>
+            </svg>
+          }
+          {{ 'AGENCY_CREATE_BTN_SAVE' | translate }}
+        </button>
+      </div>
+    </div>
+  </div>
+</div>

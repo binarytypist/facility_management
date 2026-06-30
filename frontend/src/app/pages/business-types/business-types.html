@@ -1,0 +1,427 @@
+<div class="min-h-screen bg-slate-900 text-slate-100 p-8">
+  <div class="max-w-7xl mx-auto">
+    <!-- Header -->
+    <div
+      class="flex flex-col md:flex-row md:items-center justify-between mb-8 space-y-4 md:space-y-0"
+    >
+      <div>
+        <h1
+          class="text-3xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-indigo-400 to-blue-400"
+        >
+          Service Category
+        </h1>
+        <p class="text-slate-400 mt-1">
+          Manage Service Categories (e.g. Soft Services) and their Work Types.
+        </p>
+      </div>
+      <div class="flex items-center space-x-4">
+        <button
+          (click)="goToDashboard()"
+          class="px-4 py-2 bg-slate-800 hover:bg-slate-700 text-slate-200 rounded-xl transition-colors font-medium text-sm border border-slate-700"
+        >
+          Back to Dashboard
+        </button>
+      </div>
+    </div>
+
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+      <!-- CATEGORIES SECTION -->
+      <div>
+        <div class="flex justify-between items-center mb-4">
+          <h2 class="text-xl font-bold text-slate-200">Service Categories</h2>
+          <button
+            (click)="openCreateCatModal()"
+            class="px-3 py-1.5 bg-indigo-600 hover:bg-indigo-700 text-white rounded-lg transition-colors font-medium text-sm shadow-lg shadow-indigo-500/20 flex items-center space-x-2"
+          >
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M12 4v16m8-8H4"
+              ></path>
+            </svg>
+            <span>Add Category</span>
+          </button>
+        </div>
+
+        <div class="bg-slate-950 border border-slate-800 rounded-2xl overflow-hidden shadow-2xl">
+          <div class="overflow-x-auto">
+            <table class="w-full text-left border-collapse">
+              <thead>
+                <tr class="bg-slate-900/50 border-b border-slate-800">
+                  <th
+                    class="px-4 py-3 text-xs font-semibold text-slate-400 uppercase tracking-wider"
+                  >
+                    Code
+                  </th>
+                  <th
+                    class="px-4 py-3 text-xs font-semibold text-slate-400 uppercase tracking-wider"
+                  >
+                    Name
+                  </th>
+                  <th
+                    class="px-4 py-3 text-xs font-semibold text-slate-400 uppercase tracking-wider text-right"
+                  >
+                    Actions
+                  </th>
+                </tr>
+              </thead>
+              <tbody class="divide-y divide-slate-800/50">
+                @if (loadingCat()) {
+                  <tr>
+                    <td colspan="3" class="px-4 py-8 text-center text-slate-500">
+                      Loading categories...
+                    </td>
+                  </tr>
+                }
+                @if (!loadingCat() && categories().length === 0) {
+                  <tr>
+                    <td colspan="3" class="px-4 py-8 text-center text-slate-500">
+                      No categories found.
+                    </td>
+                  </tr>
+                }
+                @for (cat of categories(); track cat) {
+                  <tr class="hover:bg-slate-900/50 transition-colors group">
+                    <td class="px-4 py-3 whitespace-nowrap">
+                      <span
+                        class="inline-flex items-center px-2 py-0.5 rounded text-xs font-bold bg-slate-800 text-slate-300 border border-slate-700"
+                      >
+                        {{ cat.code }}
+                      </span>
+                    </td>
+                    <td class="px-4 py-3 whitespace-nowrap font-medium text-slate-200">
+                      {{ cat.name }}
+                    </td>
+                    <td class="px-4 py-3 whitespace-nowrap text-right">
+                      <div
+                        class="flex items-center justify-end space-x-2 opacity-0 group-hover:opacity-100 transition-opacity"
+                      >
+                        <button
+                          (click)="openEditCatModal(cat)"
+                          class="text-slate-400 hover:text-indigo-400 transition-colors"
+                          title="Edit"
+                        >
+                          <svg
+                            class="w-4 h-4"
+                            fill="none"
+                            stroke="currentColor"
+                            viewBox="0 0 24 24"
+                          >
+                            <path
+                              stroke-linecap="round"
+                              stroke-linejoin="round"
+                              stroke-width="2"
+                              d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"
+                            ></path>
+                          </svg>
+                        </button>
+                        <button
+                          (click)="deleteCat(cat.id, cat.name)"
+                          class="text-slate-400 hover:text-red-400 transition-colors"
+                          title="Delete"
+                        >
+                          <svg
+                            class="w-4 h-4"
+                            fill="none"
+                            stroke="currentColor"
+                            viewBox="0 0 24 24"
+                          >
+                            <path
+                              stroke-linecap="round"
+                              stroke-linejoin="round"
+                              stroke-width="2"
+                              d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"
+                            ></path>
+                          </svg>
+                        </button>
+                      </div>
+                    </td>
+                  </tr>
+                }
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <!-- WORK TYPES SECTION -->
+      <div>
+        <div class="flex justify-between items-center mb-4">
+          <h2 class="text-xl font-bold text-slate-200">Work Types</h2>
+          <button
+            (click)="openCreateWTModal()"
+            class="px-3 py-1.5 bg-emerald-600 hover:bg-emerald-700 text-white rounded-lg transition-colors font-medium text-sm shadow-lg shadow-emerald-500/20 flex items-center space-x-2"
+          >
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M12 4v16m8-8H4"
+              ></path>
+            </svg>
+            <span>Add Work Type</span>
+          </button>
+        </div>
+
+        <div class="bg-slate-950 border border-slate-800 rounded-2xl overflow-hidden shadow-2xl">
+          <div class="overflow-x-auto">
+            <table class="w-full text-left border-collapse">
+              <thead>
+                <tr class="bg-slate-900/50 border-b border-slate-800">
+                  <th
+                    class="px-4 py-3 text-xs font-semibold text-slate-400 uppercase tracking-wider"
+                  >
+                    Code
+                  </th>
+                  <th
+                    class="px-4 py-3 text-xs font-semibold text-slate-400 uppercase tracking-wider"
+                  >
+                    Name
+                  </th>
+                  <th
+                    class="px-4 py-3 text-xs font-semibold text-slate-400 uppercase tracking-wider"
+                  >
+                    Category
+                  </th>
+                  <th
+                    class="px-4 py-3 text-xs font-semibold text-slate-400 uppercase tracking-wider text-right"
+                  >
+                    Actions
+                  </th>
+                </tr>
+              </thead>
+              <tbody class="divide-y divide-slate-800/50">
+                @if (loadingWT()) {
+                  <tr>
+                    <td colspan="4" class="px-4 py-8 text-center text-slate-500">
+                      Loading work types...
+                    </td>
+                  </tr>
+                }
+                @if (!loadingWT() && workTypes().length === 0) {
+                  <tr>
+                    <td colspan="4" class="px-4 py-8 text-center text-slate-500">
+                      No work types found.
+                    </td>
+                  </tr>
+                }
+                @for (wt of workTypes(); track wt) {
+                  <tr class="hover:bg-slate-900/50 transition-colors group">
+                    <td class="px-4 py-3 whitespace-nowrap">
+                      <span
+                        class="inline-flex items-center px-2 py-0.5 rounded text-xs font-bold bg-slate-800 text-slate-300 border border-slate-700"
+                      >
+                        {{ wt.code }}
+                      </span>
+                    </td>
+                    <td class="px-4 py-3 whitespace-nowrap font-medium text-slate-200">
+                      {{ wt.name }}
+                    </td>
+                    <td class="px-4 py-3 whitespace-nowrap text-xs text-slate-400">
+                      {{ wt.category_name || 'Unknown' }}
+                    </td>
+                    <td class="px-4 py-3 whitespace-nowrap text-right">
+                      <div
+                        class="flex items-center justify-end space-x-2 opacity-0 group-hover:opacity-100 transition-opacity"
+                      >
+                        <button
+                          (click)="openEditWTModal(wt)"
+                          class="text-slate-400 hover:text-emerald-400 transition-colors"
+                          title="Edit"
+                        >
+                          <svg
+                            class="w-4 h-4"
+                            fill="none"
+                            stroke="currentColor"
+                            viewBox="0 0 24 24"
+                          >
+                            <path
+                              stroke-linecap="round"
+                              stroke-linejoin="round"
+                              stroke-width="2"
+                              d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"
+                            ></path>
+                          </svg>
+                        </button>
+                        <button
+                          (click)="deleteWT(wt.id, wt.name)"
+                          class="text-slate-400 hover:text-red-400 transition-colors"
+                          title="Delete"
+                        >
+                          <svg
+                            class="w-4 h-4"
+                            fill="none"
+                            stroke="currentColor"
+                            viewBox="0 0 24 24"
+                          >
+                            <path
+                              stroke-linecap="round"
+                              stroke-linejoin="round"
+                              stroke-width="2"
+                              d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"
+                            ></path>
+                          </svg>
+                        </button>
+                      </div>
+                    </td>
+                  </tr>
+                }
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Modal for Service Categories -->
+@if (showCatModal()) {
+  <div class="fixed inset-0 z-50 flex items-center justify-center p-4">
+    <div class="absolute inset-0 bg-black/60 backdrop-blur-sm" (click)="closeCatModal()"></div>
+    <div
+      class="relative w-full max-w-md bg-slate-900 border border-slate-700 rounded-2xl shadow-2xl overflow-hidden animate-fade-in"
+    >
+      <div class="px-6 py-4 border-b border-slate-800 flex items-center justify-between">
+        <h3 class="text-lg font-semibold text-slate-100">
+          {{ catModalMode() === 'create' ? 'Add Service Category' : 'Edit Service Category' }}
+        </h3>
+        <button (click)="closeCatModal()" class="text-slate-400 hover:text-white transition-colors">
+          <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2"
+              d="M6 18L18 6M6 6l12 12"
+            ></path>
+          </svg>
+        </button>
+      </div>
+      <div class="p-6 space-y-5">
+        <div>
+          <label class="block text-sm font-medium text-slate-400 mb-2">Code *</label>
+          <input
+            type="text"
+            [(ngModel)]="code"
+            class="w-full px-4 py-3 text-base bg-slate-900 border border-slate-700 rounded-xl focus:outline-none focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 transition-colors uppercase"
+            placeholder="e.g. CLC-2001"
+          />
+        </div>
+        <div>
+          <label class="block text-sm font-medium text-slate-400 mb-2">Category Name *</label>
+          <input
+            type="text"
+            [(ngModel)]="name"
+            class="w-full px-4 py-3 text-base bg-slate-900 border border-slate-700 rounded-xl focus:outline-none focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 transition-colors"
+            placeholder="e.g. Hard Services"
+          />
+        </div>
+      </div>
+      @if (errorMessage()) {
+        <div class="px-6 py-3 bg-red-900/30 border-y border-red-800">
+          <p class="text-sm text-red-400 font-medium">{{ errorMessage() }}</p>
+        </div>
+      }
+      <div
+        class="px-6 py-4 border-t border-slate-800 bg-slate-900/50 flex items-center justify-end space-x-3"
+      >
+        <button
+          (click)="closeCatModal()"
+          class="px-4 py-2 text-sm font-medium text-slate-300 hover:text-white transition-colors"
+        >
+          Cancel
+        </button>
+        <button
+          (click)="saveCat()"
+          [disabled]="saving() || !isCatFormValid"
+          class="px-6 py-2 bg-indigo-600 hover:bg-indigo-700 disabled:opacity-50 text-white text-sm font-medium rounded-xl shadow-lg shadow-indigo-500/20 transition-all"
+        >
+          {{ catModalMode() === 'create' ? 'Create' : 'Update' }}
+        </button>
+      </div>
+    </div>
+  </div>
+}
+
+<!-- Modal for Work Types -->
+@if (showWTModal()) {
+  <div class="fixed inset-0 z-50 flex items-center justify-center p-4">
+    <div class="absolute inset-0 bg-black/60 backdrop-blur-sm" (click)="closeWTModal()"></div>
+    <div
+      class="relative w-full max-w-md bg-slate-900 border border-slate-700 rounded-2xl shadow-2xl overflow-hidden animate-fade-in"
+    >
+      <div class="px-6 py-4 border-b border-slate-800 flex items-center justify-between">
+        <h3 class="text-lg font-semibold text-slate-100">
+          {{ wtModalMode() === 'create' ? 'Add Work Type' : 'Edit Work Type' }}
+        </h3>
+        <button (click)="closeWTModal()" class="text-slate-400 hover:text-white transition-colors">
+          <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2"
+              d="M6 18L18 6M6 6l12 12"
+            ></path>
+          </svg>
+        </button>
+      </div>
+      <div class="p-6 space-y-5">
+        <div>
+          <label class="block text-sm font-medium text-slate-400 mb-2">Code *</label>
+          <input
+            type="text"
+            [(ngModel)]="code"
+            class="w-full px-4 py-3 text-base bg-slate-900 border border-slate-700 rounded-xl focus:outline-none focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500 transition-colors uppercase"
+            placeholder="e.g. CLEANING"
+          />
+        </div>
+        <div>
+          <label class="block text-sm font-medium text-slate-400 mb-2">Work Type Name *</label>
+          <input
+            type="text"
+            [(ngModel)]="name"
+            class="w-full px-4 py-3 text-base bg-slate-900 border border-slate-700 rounded-xl focus:outline-none focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500 transition-colors"
+            placeholder="e.g. Cleaning / Housekeeping"
+          />
+        </div>
+        <div>
+          <label class="block text-sm font-medium text-slate-400 mb-2">Parent Category *</label>
+          <select
+            [(ngModel)]="categoryId"
+            class="w-full px-4 py-3 text-base bg-slate-900 border border-slate-700 rounded-xl focus:outline-none focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500 transition-colors text-slate-200"
+          >
+            <option [ngValue]="null" disabled>Select a Category...</option>
+            @for (cat of categories(); track cat) {
+              <option [ngValue]="cat.id">{{ cat.name }}</option>
+            }
+          </select>
+        </div>
+      </div>
+      @if (errorMessage()) {
+        <div class="px-6 py-3 bg-red-900/30 border-y border-red-800">
+          <p class="text-sm text-red-400 font-medium">{{ errorMessage() }}</p>
+        </div>
+      }
+      <div
+        class="px-6 py-4 border-t border-slate-800 bg-slate-900/50 flex items-center justify-end space-x-3"
+      >
+        <button
+          (click)="closeWTModal()"
+          class="px-4 py-2 text-sm font-medium text-slate-300 hover:text-white transition-colors"
+        >
+          Cancel
+        </button>
+        <button
+          (click)="saveWT()"
+          [disabled]="saving() || !isWTFormValid"
+          class="px-6 py-2 bg-emerald-600 hover:bg-emerald-700 disabled:opacity-50 text-white text-sm font-medium rounded-xl shadow-lg shadow-emerald-500/20 transition-all"
+        >
+          {{ wtModalMode() === 'create' ? 'Create' : 'Update' }}
+        </button>
+      </div>
+    </div>
+  </div>
+}

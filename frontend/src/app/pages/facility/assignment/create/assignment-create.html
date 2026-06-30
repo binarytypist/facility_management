@@ -1,0 +1,285 @@
+<div class="h-full bg-slate-950 p-6 flex flex-col text-slate-200 overflow-y-auto">
+  <div class="w-full h-full flex flex-col">
+    <!-- Header -->
+    <div class="mb-8 border-b border-slate-800 pb-4">
+      <h1 class="text-3xl font-bold text-slate-100 flex items-center space-x-3">
+        <svg class="w-8 h-8 text-indigo-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            stroke-width="2"
+            d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"
+          ></path>
+        </svg>
+        <span>Assign Selected Work Items</span>
+      </h1>
+      <p class="text-sm text-slate-500 mt-2 ml-11">
+        Assign multiple work events to an agency in bulk.
+      </p>
+    </div>
+
+    <!-- Main Content Box -->
+    <div
+      class="bg-slate-900 border border-slate-800 rounded-2xl p-6 shadow-2xl flex-1 flex flex-col"
+    >
+      <div class="flex flex-col space-y-6 flex-1 min-h-0">
+        <!-- Assign To & Travel Mode Section -->
+        <div class="flex flex-col md:flex-row pb-6 border-b border-slate-800 mb-2 gap-6 items-start md:items-center">
+          <div class="w-full md:w-1/3 flex flex-col space-y-3">
+            <label class="text-sm font-semibold text-slate-300">Assign To</label>
+            <p-multiSelect
+              [options]="agencies()"
+              [(ngModel)]="selectedAgencies"
+              optionLabel="displayName"
+              [filter]="true"
+              filterBy="displayName"
+              [showClear]="true"
+              placeholder="Search and select an agency..."
+              [selectionLimit]="1"
+              styleClass="w-full bg-slate-950 border border-slate-700 rounded-xl text-sm text-slate-200"
+              panelStyleClass="bg-slate-900 border border-slate-800 text-slate-200"
+            >
+              <ng-template pTemplate="selectedItems">
+                @if (selectedAgencies && selectedAgencies.length > 0) {
+                  <div class="flex items-center">
+                    <div class="py-1">{{ selectedAgencies[0].displayName }}</div>
+                  </div>
+                }
+              </ng-template>
+              <ng-template let-agency pTemplate="item">
+                <div class="flex items-center space-x-3 py-1">
+                  <span
+                    class="font-mono text-xs text-indigo-300 bg-indigo-900/30 border border-indigo-800 px-2 py-1 rounded-md"
+                    >{{ agency.code || 'N/A' }}</span
+                  >
+                  <span class="font-medium">{{ agency.name }}</span>
+                </div>
+              </ng-template>
+            </p-multiSelect>
+          </div>
+
+          <!-- Travel Mode Buttons -->
+          <div class="w-full md:w-1/3 flex flex-col space-y-3">
+            <label class="text-sm font-semibold text-slate-300">Travel Mode</label>
+            <div class="flex bg-slate-950 border border-slate-800 rounded-xl p-1 w-max">
+              <button
+                type="button"
+                (click)="travelMode.set('vehicle')"
+                [class.bg-indigo-600]="travelMode() === 'vehicle'"
+                [class.text-white]="travelMode() === 'vehicle'"
+                [class.text-slate-400]="travelMode() !== 'vehicle'"
+                class="px-4 py-1.5 text-xs font-semibold rounded-lg hover:text-slate-200 transition-all flex items-center space-x-1.5"
+              >
+                <span>🚗</span>
+                <span>Vehicle</span>
+              </button>
+              <button
+                type="button"
+                (click)="travelMode.set('bicycle')"
+                [class.bg-indigo-600]="travelMode() === 'bicycle'"
+                [class.text-white]="travelMode() === 'bicycle'"
+                [class.text-slate-400]="travelMode() !== 'bicycle'"
+                class="px-4 py-1.5 text-xs font-semibold rounded-lg hover:text-slate-200 transition-all flex items-center space-x-1.5"
+              >
+                <span>🚲</span>
+                <span>Bicycle</span>
+              </button>
+              <button
+                type="button"
+                (click)="travelMode.set('walking')"
+                [class.bg-indigo-600]="travelMode() === 'walking'"
+                [class.text-white]="travelMode() === 'walking'"
+                [class.text-slate-400]="travelMode() !== 'walking'"
+                class="px-4 py-1.5 text-xs font-semibold rounded-lg hover:text-slate-200 transition-all flex items-center space-x-1.5"
+              >
+                <span>🚶</span>
+                <span>Walking</span>
+              </button>
+            </div>
+          </div>
+
+          <!-- Summary Metrics -->
+          @if (selectedAgencies && selectedAgencies.length > 0 && selectedEventsToAssign.length > 0) {
+            <div class="flex-1 w-full bg-indigo-950/20 rounded-xl p-3 flex items-center justify-between">
+              <div class="space-y-1">
+                <div class="text-sm font-semibold text-slate-300">Total Transit Metrics</div>
+                <div class="flex items-center space-x-4">
+                  <div class="text-xs text-slate-400 flex items-center space-x-1.5">
+                    <span class="text-sm">
+                      @if (travelMode() === 'vehicle') { 🚗 }
+                      @else if (travelMode() === 'bicycle') { 🚲 }
+                      @else if (travelMode() === 'walking') { 🚶 }
+                    </span>
+                    <span>Distance: <strong class="text-base font-bold text-slate-200 ml-1">{{ getSummaryStats().totalDistance | number:'1.2-2' }} km</strong></span>
+                  </div>
+                  <div class="text-slate-700">|</div>
+                  <div class="text-xs text-slate-400">
+                    Est. Duration: <strong class="text-base font-bold text-indigo-400 ml-1">{{ getSummaryStats().formattedTime }}</strong>
+                  </div>
+                </div>
+              </div>
+            </div>
+          }
+        </div>
+
+        <!-- Table Section -->
+        <div class="flex flex-col space-y-3 flex-1 min-h-0">
+          <label class="text-sm font-semibold text-slate-300"
+            >Selected Items ({{ selectedEventsToAssign.length }} / {{ events().length }})</label
+          >
+          <div
+            class="border border-slate-700 rounded-xl overflow-hidden shadow-inner flex-1 bg-slate-900"
+          >
+            <p-table
+              [value]="events()"
+              [(selection)]="selectedEventsToAssign"
+              [scrollable]="true"
+              scrollHeight="flex"
+              [resizableColumns]="true"
+              columnResizeMode="expand"
+              styleClass="p-datatable-sm p-datatable-gridlines p-datatable-striped"
+              [tableStyle]="{ 'min-width': '100%' }"
+            >
+              <ng-template pTemplate="header">
+                <tr
+                  class="border-b border-slate-800 text-slate-400 uppercase tracking-wider font-semibold text-xs bg-slate-900"
+                >
+                  <th style="width: 3rem">
+                    <p-tableHeaderCheckbox></p-tableHeaderCheckbox>
+                  </th>
+                  <th pResizableColumn class="py-3 px-4">Priority</th>
+                  <th pResizableColumn class="py-3 px-4">Start Date</th>
+                  <th pResizableColumn class="py-3 px-4">End Date</th>
+                  <th pResizableColumn class="py-3 px-4">ID</th>
+                  <th pResizableColumn class="py-3 px-4">Title</th>
+                  <th pResizableColumn class="py-3 px-4">Location</th>
+                  <th pResizableColumn class="py-3 px-4" style="width: 110px">Distance</th>
+                  <th pResizableColumn class="py-3 px-4" style="width: 140px">Est. Travel Time</th>
+                  <th pResizableColumn class="py-3 px-4">Category</th>
+                  <th pResizableColumn class="py-3 px-4">Status</th>
+                  <th pResizableColumn class="py-3 px-4">Description</th>
+                </tr>
+              </ng-template>
+              <ng-template pTemplate="body" let-event>
+                <tr
+                  class="transition-colors text-slate-300 text-xs border-b border-slate-800/50 bg-slate-900 hover:bg-slate-800/30"
+                >
+                  <td class="py-3 px-4">
+                    <p-tableCheckbox [value]="event"></p-tableCheckbox>
+                  </td>
+                  <td class="py-3 px-4">
+                    <span
+                      class="px-2 py-0.5 rounded text-[9px] font-extrabold uppercase"
+                      [class.bg-slate-800]="event.priority === 'low'"
+                      [class.text-slate-400]="event.priority === 'low'"
+                      [class.bg-blue-950]="event.priority === 'medium'"
+                      [class.text-blue-400]="event.priority === 'medium'"
+                      [class.bg-amber-950]="event.priority === 'high'"
+                      [class.text-amber-400]="event.priority === 'high'"
+                      [class.bg-red-950]="event.priority === 'critical'"
+                      [class.text-red-400]="event.priority === 'critical'"
+                    >
+                      {{ event.priority }}
+                    </span>
+                  </td>
+                  <td class="py-3 px-4 text-[11px] text-slate-400">
+                    {{ event.start_date | date: 'shortDate' }}
+                  </td>
+                  <td class="py-3 px-4 text-[11px] text-slate-400">
+                    {{ event.end_date ? (event.end_date | date: 'shortDate') : '-' }}
+                  </td>
+                  <td class="py-3 px-4 font-mono text-slate-500 font-semibold">#{{ event.id }}</td>
+                  <td class="py-3 px-4">
+                    <span class="font-semibold block truncate max-w-[150px]">
+                      {{ event.title }}
+                    </span>
+                  </td>
+                  <td class="py-3 px-4 truncate max-w-[120px]">
+                    <div class="font-medium text-slate-400">{{ event.location_name }}</div>
+                    <div class="text-[10px] text-slate-500 capitalize">
+                      {{ event.location_type }}
+                    </div>
+                  </td>
+                  <td class="py-3 px-4">
+                    @if (getDistanceToSelectedAgency(event); as dist) {
+                      <span class="font-mono text-slate-300 font-semibold">{{ dist | number:'1.2-2' }} km</span>
+                    } @else {
+                      <span class="text-slate-600 italic">No Agency</span>
+                    }
+                  </td>
+                  <td class="py-3 px-4">
+                    @if (getTravelTimeToSelectedAgency(event); as time) {
+                      <div class="flex items-center space-x-1.5 text-indigo-300 font-semibold">
+                        <span>
+                          @if (travelMode() === 'vehicle') { 🚗 }
+                          @else if (travelMode() === 'bicycle') { 🚲 }
+                          @else if (travelMode() === 'walking') { 🚶 }
+                        </span>
+                        <span>{{ time }}</span>
+                      </div>
+                    } @else {
+                      <span class="text-slate-600 italic">-</span>
+                    }
+                  </td>
+                  <td class="py-3 px-4 truncate max-w-[120px]">
+                    <span
+                      class="px-2 py-0.5 bg-slate-900 border border-slate-800 text-slate-400 rounded-md font-medium text-[10px] truncate block"
+                    >
+                      {{ event.service_category_name }}
+                    </span>
+                  </td>
+                  <td class="py-3 px-4 capitalize">
+                    <span
+                      class="px-2 py-0.5 text-[9px] font-extrabold rounded-md uppercase"
+                      [class.bg-indigo-950]="
+                        event.status === 'created' || event.status === 'assigned'
+                      "
+                      [class.text-indigo-400]="
+                        event.status === 'created' || event.status === 'assigned'
+                      "
+                      [class.bg-blue-950]="event.status === 'in_progress'"
+                      [class.text-blue-400]="event.status === 'in_progress'"
+                      [class.bg-emerald-950]="event.status === 'completed'"
+                      [class.text-emerald-400]="event.status === 'completed'"
+                      [class.bg-slate-800]="event.status === 'closed'"
+                      [class.text-slate-400]="event.status === 'closed'"
+                    >
+                      {{ event.status }}
+                    </span>
+                  </td>
+                  <td
+                    class="py-3 px-4 text-slate-400 max-w-[200px] truncate"
+                    [title]="event.description || ''"
+                  >
+                    {{ event.description || '-' }}
+                  </td>
+                </tr>
+              </ng-template>
+            </p-table>
+          </div>
+        </div>
+      </div>
+
+      <!-- Actions -->
+      <div class="flex justify-end space-x-4 pt-8 mt-auto">
+        <button
+          (click)="cancel()"
+          class="px-6 py-2.5 bg-slate-800 hover:bg-slate-700 border border-slate-700 hover:border-slate-600 text-slate-300 rounded-xl font-medium transition-colors text-sm shadow-sm"
+        >
+          Cancel
+        </button>
+        <button
+          (click)="save()"
+          [disabled]="
+            !selectedAgencies ||
+            selectedAgencies.length === 0 ||
+            selectedEventsToAssign.length === 0
+          "
+          class="px-6 py-2.5 bg-indigo-600 hover:bg-indigo-500 disabled:bg-slate-800 disabled:text-slate-500 disabled:border-slate-700 disabled:shadow-none text-white rounded-xl font-medium shadow-lg shadow-indigo-900/20 transition-colors text-sm border border-indigo-500"
+        >
+          Confirm Assignment
+        </button>
+      </div>
+    </div>
+  </div>
+</div>

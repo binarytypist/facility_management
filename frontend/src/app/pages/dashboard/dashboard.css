@@ -1,0 +1,356 @@
+/* Custom scrollbar for sidebar and cards */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: rgba(15, 23, 42, 0.3);
+}
+
+::-webkit-scrollbar-thumb {
+  background: rgba(148, 163, 184, 0.2);
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: rgba(148, 163, 184, 0.4);
+}
+
+/* Animations for cards */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(4px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.grid > div {
+  animation: fadeIn 0.25s ease-out forwards;
+}
+
+/* Tree hover styles */
+.tree-node-selected {
+  background-color: rgba(99, 102, 241, 0.15);
+  border-color: rgba(99, 102, 241, 0.3);
+}
+
+/* PrimeNG Table Styling (Dark Theme) */
+.work-items-table-container :host ::ng-deep .p-datatable,
+:host ::ng-deep .p-datatable {
+  font-size: 12px;
+}
+
+:host ::ng-deep .p-datatable .p-datatable-header {
+  background: rgba(15, 23, 42, 0.6) !important;
+  border-color: rgba(51, 65, 85, 0.8) !important;
+  color: #cbd5e1 !important;
+}
+
+:host ::ng-deep .p-datatable .p-datatable-thead > tr > th {
+  background: rgba(15, 23, 42, 0.6) !important;
+  border-color: rgba(51, 65, 85, 0.6) !important;
+  color: #94a3b8 !important;
+  font-size: 10px !important;
+  font-weight: 700 !important;
+  text-transform: uppercase !important;
+  letter-spacing: 0.05em !important;
+  padding: 12px 16px !important;
+}
+
+:host ::ng-deep .p-datatable .p-datatable-tbody > tr {
+  background: transparent !important;
+  border-color: rgba(51, 65, 85, 0.3) !important;
+  transition: background 0.15s ease !important;
+}
+
+:host ::ng-deep .p-datatable .p-datatable-tbody > tr:hover {
+  background: rgba(30, 41, 59, 0.4) !important;
+}
+
+:host ::ng-deep .p-datatable .p-datatable-tbody > tr > td {
+  border-color: rgba(51, 65, 85, 0.3) !important;
+  color: #cbd5e1 !important;
+  padding: 10px 16px !important;
+  font-size: 11px !important;
+}
+
+:host ::ng-deep .p-paginator {
+  background: rgba(15, 23, 42, 0.4) !important;
+  border-color: rgba(51, 65, 85, 0.6) !important;
+  color: #94a3b8 !important;
+}
+
+:host ::ng-deep .p-paginator .p-paginator-page {
+  color: #94a3b8 !important;
+  border-radius: 8px !important;
+  min-width: 28px !important;
+  height: 28px !important;
+}
+
+:host ::ng-deep .p-paginator .p-paginator-page.p-highlight {
+  background: rgba(99, 102, 241, 0.2) !important;
+  color: #818cf8 !important;
+  border-color: rgba(99, 102, 241, 0.3) !important;
+}
+
+:host ::ng-deep .p-sortable-column .p-sortable-column-icon {
+  color: #64748b !important;
+}
+
+:host ::ng-deep .p-sortable-column.p-highlight .p-sortable-column-icon {
+  color: #818cf8 !important;
+}
+
+/* Calendar grid cell hover effect */
+.grid-cols-7 > div:hover {
+  background-color: rgba(30, 41, 59, 0.3);
+}
+
+/* Light Mode styling overrides */
+.light-mode {
+  background-color: #f8fafc !important; /* light slate-50 */
+  color: #0f172a !important; /* dark slate-900 */
+}
+
+/* Header light mode overrides */
+.light-mode header {
+  background-color: rgba(255, 255, 255, 0.8) !important;
+  border-color: #e2e8f0 !important; /* border-slate-200 */
+}
+
+.light-mode header p {
+  color: #64748b !important; /* text-slate-500 */
+}
+
+/* Search bar light mode overrides */
+.light-mode header input {
+  background-color: #ffffff !important;
+  border-color: #cbd5e1 !important; /* border-slate-300 */
+  color: #0f172a !important;
+}
+
+.light-mode header input::placeholder {
+  color: #94a3b8 !important; /* text-slate-400 */
+}
+
+.light-mode header input:focus {
+  border-color: #6366f1 !important;
+}
+
+/* Header selects in light mode */
+.light-mode header select {
+  background-color: #ffffff !important;
+  border-color: #cbd5e1 !important;
+  color: #334155 !important;
+}
+
+/* Sidebar light mode overrides */
+.light-mode aside {
+  background-color: #ffffff !important;
+  border-color: #e2e8f0 !important;
+}
+
+.light-mode aside h2 {
+  color: #475569 !important; /* text-slate-600 */
+}
+
+.light-mode aside p {
+  color: #64748b !important;
+}
+
+.light-mode aside .hover\:bg-slate-900:hover {
+  background-color: #f1f5f9 !important; /* hover background light */
+}
+
+.light-mode aside .text-slate-300 {
+  color: #334155 !important;
+}
+
+.light-mode aside .bg-slate-800 {
+  background-color: #e2e8f0 !important;
+  border-color: #cbd5e1 !important;
+}
+
+/* Main content workspace */
+.light-mode main {
+  background-color: #f8fafc !important;
+}
+
+/* KPI Cards light mode */
+.light-mode section .bg-slate-950\/50 {
+  background-color: #ffffff !important;
+  border-color: #e2e8f0 !important;
+  box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.05), 0 2px 4px -2px rgb(0 0 0 / 0.05) !important;
+}
+
+.light-mode section .text-slate-100 {
+  color: #0f172a !important;
+}
+
+.light-mode section .text-slate-400 {
+  color: #475569 !important;
+}
+
+/* Filters panel light mode */
+.light-mode section.bg-slate-950\/40 {
+  background-color: #ffffff !important;
+  border-color: #e2e8f0 !important;
+}
+
+.light-mode section.bg-slate-950\/40 label {
+  color: #64748b !important;
+}
+
+.light-mode section.bg-slate-950\/40 select {
+  background-color: #ffffff !important;
+  border-color: #cbd5e1 !important;
+  color: #334155 !important;
+}
+
+/* Tabs */
+.light-mode .border-b.border-slate-800\/80 {
+  border-color: #e2e8f0 !important;
+}
+
+/* Kanban board columns */
+.light-mode .grid .bg-slate-950\/40 {
+  background-color: rgba(241, 245, 249, 0.5) !important; /* light slate-100 background */
+  border-color: #e2e8f0 !important;
+}
+
+.light-mode .grid .text-slate-300 {
+  color: #475569 !important;
+}
+
+/* Task cards light mode */
+.light-mode .grid .bg-slate-900 {
+  background-color: #ffffff !important;
+  border-color: #e2e8f0 !important;
+  box-shadow: 0 1px 3px 0 rgb(0 0 0 / 0.1), 0 1px 2px -1px rgb(0 0 0 / 0.1) !important;
+}
+
+.light-mode .grid .bg-slate-900 h4 {
+  color: #1e293b !important;
+}
+
+.light-mode .grid .bg-slate-900 .text-slate-500 {
+  color: #64748b !important;
+}
+
+.light-mode .grid .bg-slate-900 .bg-slate-800 {
+  background-color: #f1f5f9 !important;
+  color: #475569 !important;
+}
+
+/* Table view light mode */
+.light-mode .bg-slate-950\/30 {
+  background-color: #ffffff !important;
+  border-color: #e2e8f0 !important;
+}
+
+.light-mode .bg-slate-950\/30 tr.bg-slate-950\/60 {
+  background-color: #f8fafc !important;
+  border-color: #e2e8f0 !important;
+}
+
+.light-mode .bg-slate-950\/30 th {
+  color: #475569 !important;
+  border-color: #e2e8f0 !important;
+}
+
+.light-mode .bg-slate-950\/30 td {
+  border-color: #f1f5f9 !important;
+}
+
+.light-mode .bg-slate-950\/30 tr:hover {
+  background-color: #f8fafc !important;
+}
+
+/* Analytics charts */
+.light-mode .bg-slate-950\/40 {
+  background-color: #ffffff !important;
+  border-color: #e2e8f0 !important;
+}
+
+.light-mode .bg-slate-950\/40 h3 {
+  color: #475569 !important;
+}
+
+.light-mode .bg-slate-950\/40 .bg-slate-800 {
+  background-color: #e2e8f0 !important;
+}
+
+/* Modals */
+.light-mode .fixed.bg-slate-950\/80 {
+  background-color: rgba(15, 23, 42, 0.6) !important;
+}
+
+.light-mode .bg-slate-900.border-slate-800 {
+  background-color: #ffffff !important;
+  border-color: #e2e8f0 !important;
+  color: #0f172a !important;
+}
+
+.light-mode .bg-slate-900.border-slate-800 h3 {
+  color: #0f172a !important;
+}
+
+.light-mode .bg-slate-900.border-slate-800 label {
+  color: #475569 !important;
+}
+
+.light-mode .bg-slate-900.border-slate-800 input,
+.light-mode .bg-slate-900.border-slate-800 textarea,
+.light-mode .bg-slate-900.border-slate-800 select {
+  background-color: #ffffff !important;
+  border-color: #cbd5e1 !important;
+  color: #0f172a !important;
+}
+
+.light-mode .bg-slate-900.border-slate-800 .bg-slate-950\/40,
+.light-mode .bg-slate-900.border-slate-800 .bg-slate-950\/20,
+.light-mode .bg-slate-900.border-slate-800 .bg-slate-950\/50,
+.light-mode .bg-slate-900.border-slate-800 .bg-slate-950\/60 {
+  background-color: #f8fafc !important;
+  border-color: #e2e8f0 !important;
+}
+
+.light-mode .bg-slate-900.border-slate-800 li {
+  border-color: #e2e8f0 !important;
+}
+
+/* PrimeNG Table Light Mode */
+.light-mode :host ::ng-deep .p-datatable .p-datatable-thead > tr > th {
+  background: #f8fafc !important;
+  border-color: #e2e8f0 !important;
+  color: #475569 !important;
+}
+
+.light-mode :host ::ng-deep .p-datatable .p-datatable-tbody > tr {
+  background: #ffffff !important;
+}
+
+.light-mode :host ::ng-deep .p-datatable .p-datatable-tbody > tr:hover {
+  background: #f8fafc !important;
+}
+
+.light-mode :host ::ng-deep .p-datatable .p-datatable-tbody > tr > td {
+  border-color: #e2e8f0 !important;
+  color: #334155 !important;
+}
+
+.light-mode :host ::ng-deep .p-paginator {
+  background: #ffffff !important;
+  border-color: #e2e8f0 !important;
+  color: #475569 !important;
+}
+
+/* Calendar light mode */
+.light-mode .grid-cols-7 .bg-slate-950\/60 {
+  background-color: #f8fafc !important;
+}
