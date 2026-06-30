@@ -1,0 +1,46 @@
+# Node
+node_modules/
+npm-debug.log
+yarn-error.log
+yarn-debug.log*
+.pnpm-debug.log*
+
+# Angular Frontend
+dist/
+tmp/
+out-tsc/
+bazel-out/
+.angular/
+coverage/
+
+# Next.js / Node Backend
+.next/
+out/
+build/
+.pnp
+.pnp.*
+.yarn/*
+!.yarn/patches
+!.yarn/plugins
+!.yarn/releases
+!.yarn/versions
+
+# Environment files
+.env
+.env.local
+.env.*.local
+.env.*
+
+# IDEs and Editors
+.vscode/
+.idea/
+.project
+.classpath
+.c9/
+*.launch
+.settings/
+*.sublime-workspace
+
+# OS Files
+.DS_Store
+Thumbs.db
