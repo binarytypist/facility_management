@@ -1,6 +1,7 @@
-# Geo Task Dashboard
+# facility_management
 
-The **Geo Task Dashboard** is a full-stack solution designed for managing, assigning, and tracking geographic tasks and field work. The system is split across three main components: an admin web dashboard, a central API, and a mobile application for field workers.
+
+The **facility_management** is a full-stack solution designed for managing, assigning, and tracking geographic tasks and field work. The system is split across three main components: an admin web dashboard, a central API, and a mobile application for field workers.
 
 ## 📖 Program Description
 
