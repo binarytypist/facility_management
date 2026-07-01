@@ -3,7 +3,7 @@ class ApiConstants {
   // When running on an Android emulator, 'localhost' or '127.0.0.1' points to the emulator itself.
   // Use '10.0.2.2' for Android emulator to connect to the host machine's localhost.
   // For iOS simulator, web, or windows desktop, 'localhost' or '127.0.0.1' works.
-  static const String baseUrl = 'http://localhost:3000/api';
+  static const String baseUrl = 'http://192.168.1.59:3000/api';
 
   // Specific API endpoints
   static const String clients = '$baseUrl/clients';

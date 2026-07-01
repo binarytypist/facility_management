@@ -167,7 +167,7 @@ class WorkItemCard extends StatelessWidget {
                 spacing: 8,
                 runSpacing: 8,
                 children: [
-                  _buildTag(event.serviceCategoryName, Colors.grey.shade200, Colors.black87),
+                  _buildTag(event.workTypeName, Colors.grey.shade200, Colors.black87),
                   _buildTag(
                     event.status.toUpperCase(),
                     _getStatusColor(event.status).withOpacity(0.1),
