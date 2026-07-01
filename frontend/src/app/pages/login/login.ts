@@ -25,22 +25,28 @@ export class Login {
     this.isLoading.set(true);
     this.errorMessage.set('');
 
-    const payload = {
+    this.http.post<any>(`${environment.apiUrl}/login`, this.buildLoginPayload())
+      .subscribe({
+        next: (res) => this.handleLoginSuccess(res),
+        error: (err) => this.handleLoginError(err)
+      });
+  }
+
+  private buildLoginPayload(): { email: string; password: string } {
+    return {
       email: this.email(),
       password: this.password()
     };
+  }
 
-    this.http.post<any>(`${environment.apiUrl}/login`, payload).subscribe({
-      next: (res: any) => {
-        this.isLoading.set(false);
-        // Save role locally for policy checking
-        localStorage.setItem('userRole', res.role || 'user');
-        this.router.navigate(['/landing']);
-      },
-      error: (err: any) => {
-        this.isLoading.set(false);
-        this.errorMessage.set(err.error?.message || 'Invalid email or password');
-      }
-    });
+  private handleLoginSuccess(res: any): void {
+    this.isLoading.set(false);
+    localStorage.setItem('userRole', res.role || 'user');
+    this.router.navigate(['/landing']);
+  }
+
+  private handleLoginError(err: any): void {
+    this.isLoading.set(false);
+    this.errorMessage.set(err.error?.message || 'Invalid email or password');
   }
 }

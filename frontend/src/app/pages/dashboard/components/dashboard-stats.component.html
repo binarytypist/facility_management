@@ -1,0 +1,66 @@
+<section class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-6">
+  <!-- Card 1: Active Tasks -->
+  <div class="bg-slate-950/50 border border-slate-800/60 rounded-2xl p-5 hover:border-slate-700/80 transition-all hover:shadow-lg hover:shadow-slate-950/40 group relative overflow-hidden">
+    <div class="absolute right-0 top-0 w-24 h-24 bg-indigo-500/5 rounded-bl-full group-hover:bg-indigo-500/10 transition-colors"></div>
+    <div class="flex justify-between items-start mb-3">
+      <span class="text-xs font-bold text-slate-400 uppercase tracking-wider">{{ 'ACTIVE_EVENTS' | translate }}</span>
+      <span class="p-2 bg-indigo-950 text-indigo-400 border border-indigo-900 rounded-xl">
+        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6V4m0 2a2 2 0 100 4m0-4a2 2 0 110 4m-6 8a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4m6 6v10m6-2a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4"></path>
+        </svg>
+      </span>
+    </div>
+    <div class="text-3xl font-bold font-mono text-slate-100">{{ kpiStats().active }}</div>
+    <div class="text-xs text-slate-500 mt-1">Pending maintenance operations</div>
+  </div>
+
+  <!-- Card 2: Completed Tasks -->
+  <div class="bg-slate-950/50 border border-slate-800/60 rounded-2xl p-5 hover:border-slate-700/80 transition-all hover:shadow-lg hover:shadow-slate-950/40 group relative overflow-hidden">
+    <div class="absolute right-0 top-0 w-24 h-24 bg-emerald-500/5 rounded-bl-full group-hover:bg-emerald-500/10 transition-colors"></div>
+    <div class="flex justify-between items-start mb-3">
+      <span class="text-xs font-bold text-slate-400 uppercase tracking-wider">{{ 'COMPLETED_TASKS' | translate }}</span>
+      <span class="p-2 bg-emerald-950 text-emerald-400 border border-emerald-900 rounded-xl">
+        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+        </svg>
+      </span>
+    </div>
+    <div class="text-3xl font-bold font-mono text-slate-100">{{ kpiStats().completed }}</div>
+    <div class="text-xs text-slate-500 mt-1">Awaiting manager verification</div>
+  </div>
+
+  <!-- Card 3: Maintenance Costs -->
+  <div class="bg-slate-950/50 border border-slate-800/60 rounded-2xl p-5 hover:border-slate-700/80 transition-all hover:shadow-lg hover:shadow-slate-950/40 group relative overflow-hidden">
+    <div class="absolute right-0 top-0 w-24 h-24 bg-blue-500/5 rounded-bl-full group-hover:bg-blue-500/10 transition-colors"></div>
+    <div class="flex justify-between items-start mb-3">
+      <span class="text-xs font-bold text-slate-400 uppercase tracking-wider">{{ 'TOTAL_EXPENSE' | translate }}</span>
+      <span class="p-2 bg-blue-950 text-blue-400 border border-blue-900 rounded-xl">
+        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M12 16V7"></path>
+        </svg>
+      </span>
+    </div>
+    <div class="text-3xl font-bold font-mono text-slate-100">
+      {{ kpiStats().totalCost | currency: 'USD' : 'symbol' : '1.2-2' }}
+    </div>
+    <div class="text-xs text-slate-500 mt-1">Material & labor cost accumulated</div>
+  </div>
+
+  <!-- Card 4: Scheduled vs Unscheduled -->
+  <div class="bg-slate-950/50 border border-slate-800/60 rounded-2xl p-5 hover:border-slate-700/80 transition-all hover:shadow-lg hover:shadow-slate-950/40 group relative overflow-hidden">
+    <div class="absolute right-0 top-0 w-24 h-24 bg-amber-500/5 rounded-bl-full group-hover:bg-amber-500/10 transition-colors"></div>
+    <div class="flex justify-between items-start mb-3">
+      <span class="text-xs font-bold text-slate-400 uppercase tracking-wider">{{ 'PLAN_VS_REACTIVE' | translate }}</span>
+      <span class="p-2 bg-amber-950 text-amber-400 border border-amber-900 rounded-xl">
+        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
+        </svg>
+      </span>
+    </div>
+    <div class="text-2xl font-bold text-slate-100 flex items-baseline space-x-1.5 mt-1">
+      <span class="text-3xl font-mono">{{ scheduledPercentage() }}%</span>
+      <span class="text-xs text-slate-400 font-normal">{{ 'PLANNED' | translate }}</span>
+    </div>
+    <div class="text-xs text-slate-500 mt-1">Scheduled / Total event counts</div>
+  </div>
+</section>

@@ -74,43 +74,60 @@ export class CompanyTypes implements OnInit {
     return !!(this.code.trim() && this.name.trim());
   }
 
+  private buildPayload(): { code: string; name: string } {
+    return {
+      code: this.code.trim(),
+      name: this.name.trim()
+    };
+  }
+
+  private updateCompanyType(payload: any): void {
+    this.http.put(`${environment.apiUrl}/company-types/${this.currentId}`, payload).subscribe({
+      next: () => this.handleSuccess(),
+      error: (err) => this.handleError(err, 'update')
+    });
+  }
+
+
+  private handleSuccess(): void {
+    this.saving.set(false);
+    this.closeModal();
+    this.loadCompanyTypes();
+  }
+
   public save(): void {
     if (!this.isFormValid) return;
 
     this.saving.set(true);
-    const payload = { code: this.code.trim(), name: this.name.trim() };
 
-    if (this.modalMode() === 'create') {
-      this.http.post(`${environment.apiUrl}/company-types`, payload).subscribe({
-        next: () => {
-          this.saving.set(false);
-          this.closeModal();
-          this.loadCompanyTypes();
-        },
-        error: (err: any) => {
-          this.saving.set(false);
-          const errorMsg = err.error?.details
-            ? `${err.error.error}: ${err.error.details}`
-            : err.error?.error || 'Failed to create company type';
-          this.errorMessage.set(errorMsg);
-        },
-      });
+    const payload = this.buildPayload();
+
+    if (this.isCreateMode()) {
+      this.createCompanyType(payload);
     } else {
-      this.http.put(`${environment.apiUrl}/company-types/${this.currentId}`, payload).subscribe({
-        next: () => {
-          this.saving.set(false);
-          this.closeModal();
-          this.loadCompanyTypes();
-        },
-        error: (err: any) => {
-          this.saving.set(false);
-          const errorMsg = err.error?.details
-            ? `${err.error.error}: ${err.error.details}`
-            : err.error?.error || 'Failed to update company type';
-          this.errorMessage.set(errorMsg);
-        },
-      });
+      this.updateCompanyType(payload);
     }
+  }
+
+  private createCompanyType(payload: any): void {
+    this.http.post(`${environment.apiUrl}/company-types`, payload).subscribe({
+      next: () => this.handleSuccess(),
+      error: (err) => this.handleError(err, 'create')
+    });
+  }
+
+  private isCreateMode(): boolean {
+    return this.modalMode() === 'create';
+  }
+
+  private handleError(err: any, mode: 'create' | 'update'): void {
+    this.saving.set(false);
+
+    const errorMsg = err.error?.details
+      ? `${err.error.error}: ${err.error.details}`
+      : err.error?.error || `Failed to ${mode} company type`;
+
+    this.errorMessage.set(errorMsg);
   }
 
   public deleteCompanyType(id: number, name: string): void {

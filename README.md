@@ -67,6 +67,18 @@ Before running the project locally, ensure you have the following installed:
    ```
    *The backend API will typically run on `http://localhost:3000`.*
 
+### Database Reset / New PC Setup
+If you delete your database or clone this repository on a brand new PC, the backend will fail to connect and return errors. To restore it:
+1. Ensure your `.env` file exists in `backend/` and `DATABASE_URL` is correct.
+2. Recreate all database tables automatically:
+   ```bash
+   npx prisma db push
+   ```
+3. Populate the empty database with initial default data:
+   ```bash
+   npx prisma db seed
+   ```
+
 ### 2. Frontend Setup
 1. Open a new terminal and navigate to the frontend directory:
    ```bash

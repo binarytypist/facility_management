@@ -1,4 +1,4 @@
-import { Component, OnInit, signal, inject, WritableSignal } from '@angular/core';
+import { Component, OnInit, inject, signal, WritableSignal, computed } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Router, RouterModule } from '@angular/router';
@@ -7,13 +7,16 @@ import { TranslateService, TranslatePipe } from '@ngx-translate/core';
 import { TableModule } from 'primeng/table';
 import { AuthService, UserRole } from '../../services/auth.service';
 import { environment } from '../../../environments/environment';
+import { DashboardStatsComponent } from './components/dashboard-stats.component';
+import { DashboardStore } from './dashboard.store';
+import { MasterDataStore } from './master-data.store';
 
 import { LocationNode, CalendarDay } from '../../models/location.model';
 
 @Component({
   selector: 'app-dashboard',
   standalone: true,
-  imports: [CommonModule, FormsModule, RouterModule, TranslatePipe, TableModule],
+  imports: [CommonModule, FormsModule, RouterModule, TranslatePipe, TableModule, DashboardStatsComponent],
   templateUrl: './dashboard.html',
   styleUrl: './dashboard.css',
 })
@@ -24,9 +27,12 @@ export class Dashboard implements OnInit {
   protected readonly auth: AuthService = inject(AuthService);
   private readonly apiUrl: string = environment.apiUrl;
 
+  protected readonly store = inject(DashboardStore);
+  protected readonly masterData = inject(MasterDataStore);
+
   // Theme & Language State
-  protected readonly isDarkTheme: WritableSignal<boolean> = signal<boolean>(true);
-  protected readonly currentLang: WritableSignal<string> = signal<string>('en');
+  protected readonly isDarkTheme = this.store.isDarkTheme;
+  protected readonly currentLang = this.store.currentLang;
   protected readonly langOptions: Array<{ label: string; value: string }> = [
     { label: 'EN', value: 'en' },
     { label: 'ES', value: 'es' },
@@ -34,45 +40,32 @@ export class Dashboard implements OnInit {
   ];
 
   // Master Data
-  protected readonly categories: WritableSignal<any[]> = signal<any[]>([]);
-  protected readonly workTypes: WritableSignal<any[]> = signal<any[]>([]);
-  protected readonly teams: WritableSignal<any[]> = signal<any[]>([]);
-  protected readonly facilities: WritableSignal<any[]> = signal<any[]>([]);
-  protected readonly clients: WritableSignal<any[]> = signal<any[]>([]);
-  protected readonly agencies: WritableSignal<any[]> = signal<any[]>([]);
-  protected readonly locations: WritableSignal<any[]> = signal<any[]>([]);
-  protected readonly locationTree: WritableSignal<LocationNode[]> = signal<LocationNode[]>([]);
+  protected readonly categories = this.masterData.categories;
+  protected readonly workTypes = this.masterData.workTypes;
+  protected readonly teams = this.masterData.teams;
+  protected readonly facilities = this.masterData.facilities;
+  protected readonly clients = this.masterData.clients;
+  protected readonly agencies = this.masterData.agencies;
+  protected readonly locations = this.masterData.locations;
+  protected readonly locationTree = this.masterData.locationTree;
+  
   protected readonly expandedNodes: WritableSignal<Set<number>> = signal<Set<number>>(new Set());
 
   // Filter & State
-  protected readonly selectedLocation: WritableSignal<LocationNode | null> = signal<LocationNode | null>(null);
-  protected readonly searchQuery: WritableSignal<string> = signal<string>('');
-  protected readonly statusFilter: WritableSignal<string> = signal<string>('');
-  protected readonly priorityFilter: WritableSignal<string> = signal<string>('');
-  protected readonly categoryFilter: WritableSignal<string> = signal<string>('');
-  protected readonly scheduleFilter: WritableSignal<string> = signal<string>('');
-  protected readonly activeTab: WritableSignal<string> = signal<string>('event'); // 'event', 'settings'
-  protected readonly activeEventSubTab: WritableSignal<string> = signal<string>('kanban'); // 'kanban', 'list', 'calendar', 'workitems'
-
-  // Master Data Forms
-  protected readonly newCategory: WritableSignal<{ name: string; code: string }> = signal({ name: '', code: '' });
-  protected readonly newWorkType: WritableSignal<{ name: string; code: string; service_category_id: string }> = signal({ name: '', code: '', service_category_id: '' });
-  protected readonly newFacility: WritableSignal<{ name: string; facility_type_id: string; location_id: string }> = signal({ name: '', facility_type_id: '', location_id: '' });
-  protected readonly newTeam: WritableSignal<{ name: string; type: string; contact_info: string }> = signal({ name: '', type: 'internal', contact_info: '' });
-  protected readonly newClient: WritableSignal<{
-    name: string; address: string; phone: string; fax: string;
-    contact_person: string; contact_role: string; other_info: string; facility_id: string;
-  }> = signal({
-    name: '', address: '', phone: '', fax: '',
-    contact_person: '', contact_role: '', other_info: '', facility_id: ''
-  });
-  protected readonly newAgency: WritableSignal<{ name: string; code: string }> = signal({
-    name: '', code: ''
-  });
+  protected readonly selectedLocation = this.store.selectedLocation;
+  protected readonly searchQuery = computed(() => this.store.filters().search);
+  protected readonly statusFilter = computed(() => this.store.filters().status);
+  protected readonly priorityFilter = computed(() => this.store.filters().priority);
+  protected readonly categoryFilter = computed(() => this.store.filters().category);
+  protected readonly scheduleFilter = computed(() => this.store.filters().schedule);
+  
+  protected readonly activeTab = this.store.activeTab;
+  protected readonly activeEventSubTab = this.store.activeEventSubTab;
 
   // Work Events & KPI Stats
-  protected readonly workEvents: WritableSignal<any[]> = signal<any[]>([]);
-  protected readonly kpiStats: WritableSignal<any> = signal<any>({
+  protected readonly workEvents = this.store.workEvents;
+  protected readonly filteredEvents = this.store.filteredEvents;
+  protected readonly kpiStats = computed(() => this.store.kpiStats() || {
     total: 0,
     active: 0,
     completed: 0,
@@ -140,7 +133,7 @@ export class Dashboard implements OnInit {
   }
 
   protected toggleTheme(): void {
-    this.isDarkTheme.set(!this.isDarkTheme());
+    this.store.toggleTheme();
     if (this.isDarkTheme()) {
       document.documentElement.classList.add('dark');
     } else {
@@ -148,9 +141,9 @@ export class Dashboard implements OnInit {
     }
   }
 
-  protected changeLanguage(lang: string): void {
-    if (lang) {
-      this.currentLang.set(lang);
+  protected changeLang(lang: string): void {
+    if (this.currentLang() !== lang) {
+      this.store.setLanguage(lang);
       this.translateService.use(lang);
     }
   }
@@ -169,9 +162,9 @@ export class Dashboard implements OnInit {
     this.http.get<any>(`${this.apiUrl}/master-data`).subscribe({
       next: (res: any) => {
         if (res.success) {
-          this.categories.set(res.categories);
-          this.workTypes.set(res.workTypes);
-          this.teams.set(res.teams);
+          this.masterData.setCategories(res.categories);
+          this.masterData.setWorkTypes(res.workTypes);
+          this.masterData.setTeams(res.teams);
         }
       },
       error: (err: any) => console.error('Failed to load master data:', err)
@@ -180,14 +173,14 @@ export class Dashboard implements OnInit {
     this.http.get<any>(`${this.apiUrl}/clients`).subscribe({
       next: (res: any) => {
         const list: any[] = Array.isArray(res) ? res : (res.clients || []);
-        this.clients.set(list);
+        this.masterData.setClients(list);
       },
       error: (err: any) => console.error('Failed to load clients:', err)
     });
 
     this.http.get<any[]>(`${this.apiUrl}/agencies`).subscribe({
       next: (res: any[]) => {
-        this.agencies.set(res);
+        this.masterData.setAgencies(res);
       },
       error: (err: any) => console.error('Failed to load agencies:', err)
     });
@@ -195,7 +188,7 @@ export class Dashboard implements OnInit {
     this.http.get<any>(`${this.apiUrl}/locations`).subscribe({
       next: (res: any) => {
         if (res.success) {
-          this.locations.set(res.locations);
+          this.masterData.setLocations(res.locations);
           this.buildLocationTree(res.locations);
         }
       },
@@ -229,7 +222,7 @@ export class Dashboard implements OnInit {
     this.http.get<any>(`${this.apiUrl}/work-events${queryStr}`).subscribe({
       next: (res: any) => {
         if (res.success) {
-          this.workEvents.set(res.workEvents);
+          this.store.setWorkEvents(res.workEvents);
           this.updateLocationTaskCounts(res.workEvents);
           this.buildCalendar(); // refresh calendar events
         }
@@ -245,7 +238,7 @@ export class Dashboard implements OnInit {
     this.http.get<any>(`${this.apiUrl}/dashboard/stats${query}`).subscribe({
       next: (res: any) => {
         if (res.success) {
-          this.kpiStats.set(res.stats);
+          this.store.setKpiStats(res.stats);
         }
       },
       error: (err: any) => console.error('Failed to load stats:', err)
@@ -267,7 +260,7 @@ export class Dashboard implements OnInit {
     this.http.get<any>(`${this.apiUrl}/facilities`).subscribe({
       next: (res: any) => {
         if (res.success) {
-          this.facilities.set(res.facilities);
+          this.masterData.setFacilities(res.facilities);
         }
       },
       error: (err: any) => console.error('Failed to load facilities:', err)
@@ -306,7 +299,7 @@ export class Dashboard implements OnInit {
       }
     });
 
-    this.locationTree.set(rootNodes);
+    this.masterData.setLocationTree(rootNodes);
   }
 
   // Calculate task counts recursively for the tree sidebar
@@ -333,11 +326,11 @@ export class Dashboard implements OnInit {
     };
 
     tree.forEach(updateNodeCount);
-    this.locationTree.set([...tree]);
+    this.masterData.setLocationTree([...tree]);
   }
 
   protected selectLocation(node: LocationNode | null): void {
-    this.selectedLocation.set(node);
+    this.store.setSelectedLocation(node);
     this.loadWorkEvents();
     this.loadStats();
   }
@@ -356,12 +349,7 @@ export class Dashboard implements OnInit {
   // --- FILTERING & RESET ---
 
   protected clearAllFilters(): void {
-    this.searchQuery.set('');
-    this.statusFilter.set('');
-    this.priorityFilter.set('');
-    this.categoryFilter.set('');
-    this.scheduleFilter.set('');
-    this.selectedLocation.set(null);
+    this.store.clearFilters();
     this.loadWorkEvents();
     this.loadStats();
   }
@@ -369,7 +357,7 @@ export class Dashboard implements OnInit {
   // --- KANBAN BOARD COLUMNS ---
 
   protected getEventsByStatus(status: string): any[] {
-    return this.workEvents().filter((e: any) => e.status === status);
+    return this.filteredEvents().filter((e: any) => e.status === status);
   }
 
   protected updateEventStatus(event: any, newStatus: string): void {
@@ -683,12 +671,7 @@ export class Dashboard implements OnInit {
 
   // --- ANALYTICS HELPERS ---
 
-  protected getScheduledPercentage(): number {
-    const stats: any = this.kpiStats();
-    if (!stats || stats.total === 0) return 0;
-    const sched: any = stats.scheduleDistribution?.find((s: any) => s.schedule_type === 'scheduled');
-    return sched ? Math.round((sched.count / stats.total) * 100) : 0;
-  }
+  // getScheduledPercentage() has been extracted to DashboardStatsComponent
 
   protected getCategoryCostPercent(cost: number): number {
     const categories: any[] = this.kpiStats()?.costByCategory || [];
@@ -711,86 +694,7 @@ export class Dashboard implements OnInit {
   }
 
   // --- MASTER DATA MANAGEMENT ---
-
-  protected submitNewCategory(): void {
-    this.http.post<any>(`${this.apiUrl}/master-data`, { type: 'category', ...this.newCategory() }).subscribe({
-      next: (res: any) => {
-        if (res.success) {
-          this.newCategory.set({ name: '', code: '' });
-          this.loadMasterData();
-        }
-      },
-      error: (err: any) => alert(err.error?.message || 'Error creating category')
-    });
-  }
-
-  protected submitNewWorkType(): void {
-    this.http.post<any>(`${this.apiUrl}/master-data`, { type: 'work_type', ...this.newWorkType() }).subscribe({
-      next: (res: any) => {
-        if (res.success) {
-          this.newWorkType.set({ name: '', code: '', service_category_id: '' });
-          this.loadMasterData();
-        }
-      },
-      error: (err: any) => alert(err.error?.message || 'Error creating work type')
-    });
-  }
-
-  protected submitNewFacility(): void {
-    this.http.post<any>(`${this.apiUrl}/facilities`, this.newFacility()).subscribe({
-      next: (res: any) => {
-        if (res.success) {
-          this.newFacility.set({ name: '', facility_type_id: '', location_id: '' });
-          this.loadFacilities();
-        }
-      },
-      error: (err: any) => alert(err.error?.message || 'Error creating facility')
-    });
-  }
-
-  protected submitNewTeam(): void {
-    const teamData: any = this.newTeam();
-    this.http.post<any>(`${this.apiUrl}/master-data`, { type: 'team', team_type: teamData.type, name: teamData.name, contact_info: teamData.contact_info }).subscribe({
-      next: (res: any) => {
-        if (res.success) {
-          this.newTeam.set({ name: '', type: 'internal', contact_info: '' });
-          this.loadMasterData();
-        }
-      },
-      error: (err: any) => alert(err.error?.message || 'Error creating team')
-    });
-  }
-
-  protected submitNewClient(): void {
-    this.http.post<any>(`${this.apiUrl}/clients`, this.newClient()).subscribe({
-      next: (res: any) => {
-        if (res.success) {
-          this.newClient.set({
-            name: '', address: '', phone: '', fax: '',
-            contact_person: '', contact_role: '', other_info: '', facility_id: ''
-          });
-          this.loadMasterData();
-        }
-      },
-      error: (err: any) => alert(err.error?.message || 'Error creating client')
-    });
-  }
-
-  protected submitNewAgency(): void {
-    const data: any = this.newAgency();
-    if (!data.name || !data.code) {
-      alert('Agency Name and Code are required');
-      return;
-    }
-
-    this.http.post<any>(`${this.apiUrl}/agencies`, { name: data.name, code: data.code }).subscribe({
-      next: (res: any) => {
-        this.newAgency.set({ name: '', code: '' });
-        alert('Agency created successfully!');
-      },
-      error: (err: any) => alert(err.error?.message || 'Error creating agency')
-    });
-  }
+  // (Master data setup has been removed from the UI as per user request)
 
   // --- LOGOUT ---
 

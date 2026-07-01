@@ -1,11 +1,11 @@
 import { Component, OnInit, signal, inject, WritableSignal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { HttpClient } from '@angular/common/http';
 import { Router } from '@angular/router';
 import { DatePicker } from 'primeng/datepicker';
 import { TranslatePipe } from '@ngx-translate/core';
-import { environment } from '../../../../environments/environment';
+import { MasterDataService } from '../../../services/master-data.service';
+import { WorkEventService } from '../../../services/work-event.service';
 
 @Component({
   selector: 'app-facility-create',
@@ -15,9 +15,9 @@ import { environment } from '../../../../environments/environment';
   styleUrls: ['./facility-create.css']
 })
 export class FacilityCreate implements OnInit {
-  private readonly http: HttpClient = inject(HttpClient);
   protected readonly router: Router = inject(Router);
-  private readonly apiUrl: string = environment.apiUrl;
+  private readonly masterDataService = inject(MasterDataService);
+  private readonly workEventService = inject(WorkEventService);
 
   protected readonly categories: WritableSignal<any[]> = signal<any[]>([]);
   protected readonly workTypes: WritableSignal<any[]> = signal<any[]>([]);
@@ -54,7 +54,7 @@ export class FacilityCreate implements OnInit {
   }
 
   private fetchMasterData(): void {
-    this.http.get<any>(`${this.apiUrl}/master-data`).subscribe({
+    this.masterDataService.getMasterData().subscribe({
       next: (res: any) => {
         if (res.success) {
           this.categories.set(res.categories);
@@ -67,7 +67,7 @@ export class FacilityCreate implements OnInit {
   }
 
   private fetchClients(): void {
-    this.http.get<any>(`${this.apiUrl}/clients`).subscribe({
+    this.masterDataService.getClients().subscribe({
       next: (res: any) => {
         const list: any[] = Array.isArray(res) ? res : (res.clients || []);
         this.clients.set(list);
@@ -116,7 +116,7 @@ export class FacilityCreate implements OnInit {
       return;
     }
 
-    this.http.post<any>(`${this.apiUrl}/work-events`, this.buildPayload(data)).subscribe({
+    this.workEventService.createWorkEvent(this.buildPayload(data)).subscribe({
       next: (res: any) => {
         if (res.success) {
           this.router.navigate(['/facility/list']);
@@ -142,3 +142,4 @@ export class FacilityCreate implements OnInit {
     };
   }
 }
+

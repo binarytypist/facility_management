@@ -13,7 +13,7 @@ import { environment } from '../../../../../environments/environment';
 })
 export class AssignmentList implements OnInit {
   private readonly http: HttpClient = inject(HttpClient);
-  
+
   protected readonly assignments: WritableSignal<any[]> = signal<any[]>([]);
   protected readonly loading: WritableSignal<boolean> = signal<boolean>(true);
 
@@ -23,17 +23,26 @@ export class AssignmentList implements OnInit {
 
   private loadAssignments(): void {
     this.loading.set(true);
-    this.http.get<{success: boolean, workEvents: any[]}>(`${environment.apiUrl}/work-events?is_assigned=1`).subscribe({
-      next: (res: any) => {
-        if (res.success) {
-          this.assignments.set(res.workEvents);
-        }
-        this.loading.set(false);
-      },
-      error: (err: any) => {
-        console.error('Failed to load assignments:', err);
-        this.loading.set(false);
-      }
-    });
+
+    this.http
+      .get<{ success: boolean; workEvents: any[] }>(
+        `${environment.apiUrl}/work-events?is_assigned=1`
+      )
+      .subscribe({
+        next: (res) => this.handleAssignmentsSuccess(res),
+        error: (err) => this.handleAssignmentsError(err)
+      });
+  }
+
+  private handleAssignmentsSuccess(res: { success: boolean; workEvents: any[] }): void {
+    if (res.success) {
+      this.assignments.set(res.workEvents);
+    }
+    this.loading.set(false);
+  }
+
+  private handleAssignmentsError(err: any): void {
+    console.error('Failed to load assignments:', err);
+    this.loading.set(false);
   }
 }
