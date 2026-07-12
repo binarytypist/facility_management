@@ -1,8 +1,9 @@
 import { ApplicationConfig, provideBrowserGlobalErrorListeners } from '@angular/core';
+import { provideKeycloak, includeBearerTokenInterceptor, withAutoRefreshToken } from 'keycloak-angular';
 import { provideRouter } from '@angular/router';
 import { provideAnimationsAsync } from '@angular/platform-browser/animations/async';
 import { providePrimeNG } from 'primeng/config';
-import { provideHttpClient } from '@angular/common/http';
+import { provideHttpClient, withInterceptors } from '@angular/common/http';
 import { provideTranslateService } from '@ngx-translate/core';
 import { provideTranslateHttpLoader } from '@ngx-translate/http-loader';
 import { MessageService } from 'primeng/api';
@@ -19,7 +20,7 @@ export const appConfig: ApplicationConfig = {
     provideBrowserGlobalErrorListeners(),
     provideRouter(routes),
     provideAnimationsAsync(),
-    provideHttpClient(),
+    provideHttpClient(withInterceptors([includeBearerTokenInterceptor])),
     providePrimeNG({
       theme: {
         preset: Aura
@@ -36,6 +37,23 @@ export const appConfig: ApplicationConfig = {
     }),
     // SOLID: Provide concrete implementations for abstract interfaces
     { provide: GeoProvider, useClass: MockGeoService },
-    { provide: MapApiProvider, useClass: RestMapApiService }
+    { provide: MapApiProvider, useClass: RestMapApiService },
+    provideKeycloak({
+      config: {
+        url: 'http://localhost:8081',
+        realm: 'geo-task-realm',
+        clientId: 'geo-task-web-client'
+      },
+      initOptions: {
+        onLoad: 'login-required',
+        checkLoginIframe: false,
+        silentCheckSsoRedirectUri: window.location.origin + '/assets/silent-check-sso.html'
+      },
+      features: [
+        withAutoRefreshToken({
+          sessionTimeout: 60000
+        })
+      ]
+    })
   ]
 };
