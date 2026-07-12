@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import '../services/theme_provider.dart';
-import '../services/work_event_service.dart';
+import '../providers/theme_provider.dart';
+import '../services/work_event_service.interface.dart';
 import '../models/work_event.dart';
 import '../widgets/work_item_card.dart';
 import 'assignment_create_screen.dart';
@@ -17,13 +17,14 @@ class AssignmentListScreen extends StatefulWidget {
 }
 
 class _AssignmentListScreenState extends State<AssignmentListScreen> {
-  final WorkEventService _workEventService = WorkEventService();
+  late final IWorkEventService _workEventService;
   List<WorkEvent> _events = [];
   bool _isLoading = true;
 
   @override
   void initState() {
     super.initState();
+    _workEventService = context.read<IWorkEventService>();
     _fetchEvents();
   }
 

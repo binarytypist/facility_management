@@ -1,8 +1,7 @@
 import 'package:flutter/material.dart';
-import '../../services/work_event_service.dart';
-import '../../models/category.dart';
+import 'package:provider/provider.dart';
+import '../../services/work_event_service.interface.dart';
 import '../../models/work_type.dart';
-import '../../models/team.dart';
 import '../../models/location.dart';
 import '../../constants/theme_constants.dart';
 import '../widgets/create_event/title_field.dart';
@@ -22,7 +21,7 @@ class AssignmentCreateScreen extends StatefulWidget {
 }
 
 class _AssignmentCreateScreenState extends State<AssignmentCreateScreen> {
-  final WorkEventService _workEventService = WorkEventService();
+  late final IWorkEventService _workEventService;
   
   bool _isLoadingMasterData = true;
   bool _isSaving = false;
@@ -46,6 +45,7 @@ class _AssignmentCreateScreenState extends State<AssignmentCreateScreen> {
   @override
   void initState() {
     super.initState();
+    _workEventService = context.read<IWorkEventService>();
     _loadAllMasterData();
   }
 

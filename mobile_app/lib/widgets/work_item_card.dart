@@ -91,7 +91,7 @@ class WorkItemCard extends StatelessWidget {
                             Container(
                               padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
                               decoration: BoxDecoration(
-                                color: _getPriorityColor(event.priority).withOpacity(0.1),
+                                color: _getPriorityColor(event.priority).withValues(alpha: 0.1),
                                 borderRadius: BorderRadius.circular(4),
                               ),
                               child: Text(
@@ -169,7 +169,7 @@ class WorkItemCard extends StatelessWidget {
                   _buildTag(event.workTypeName, Theme.of(context).colorScheme.surfaceContainerHighest, Theme.of(context).colorScheme.onSurface),
                   _buildTag(
                     event.status.toUpperCase(),
-                    _getStatusColor(event.status).withOpacity(0.1),
+                    _getStatusColor(event.status).withValues(alpha: 0.1),
                     _getStatusColor(event.status),
                   ),
                 ],

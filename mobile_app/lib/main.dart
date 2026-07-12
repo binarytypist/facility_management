@@ -2,15 +2,26 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'screens/company_code_screen.dart';
 import 'package:provider/provider.dart';
-import 'services/theme_provider.dart';
+import 'providers/theme_provider.dart';
+import 'services/api_service.dart';
+import 'services/api_service.interface.dart';
 import 'services/company_service.dart';
+import 'services/company_service.interface.dart';
+import 'services/work_event_service.dart';
+import 'services/work_event_service.interface.dart';
 
 void main() {
   runApp(
     MultiProvider(
       providers: [
         ChangeNotifierProvider(create: (_) => ThemeProvider()),
-        Provider(create: (_) => CompanyService()),
+        Provider<IApiService>(create: (_) => ApiService()),
+        ProxyProvider<IApiService, ICompanyService>(
+          update: (_, apiService, __) => CompanyService(apiService),
+        ),
+        ProxyProvider<IApiService, IWorkEventService>(
+          update: (_, apiService, __) => WorkEventService(apiService),
+        ),
       ],
       child: const GeoTaskApp(),
     ),

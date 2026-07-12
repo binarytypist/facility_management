@@ -4,17 +4,22 @@ import '../models/category.dart';
 import '../models/work_type.dart';
 import '../models/team.dart';
 import '../models/location.dart';
-import 'api_service.dart';
+import 'work_event_service.interface.dart';
+import 'api_service.interface.dart';
 
-class WorkEventService {
-  final ApiService _apiService = ApiService();
+class WorkEventService implements IWorkEventService {
+  final IApiService _apiService;
 
+  WorkEventService(this._apiService);
+
+  @override
   Future<List<WorkEvent>> getEvents() async {
     final response = await _apiService.get(ApiConstants.workEvents);
     final eventsList = response is List ? response : (response['workEvents'] ?? []);
     return eventsList.map<WorkEvent>((json) => WorkEvent.fromJson(json)).toList();
   }
 
+  @override
   Future<Map<String, List<dynamic>>> getMasterData() async {
     final response = await _apiService.get(ApiConstants.masterData);
     if (response['success'] == true) {
@@ -31,6 +36,7 @@ class WorkEventService {
     return {'categories': [], 'workTypes': [], 'teams': []};
   }
 
+  @override
   Future<List<Location>> getLocations() async {
     final response = await _apiService.get(ApiConstants.locations);
     if (response['success'] == true) {
@@ -39,6 +45,7 @@ class WorkEventService {
     return [];
   }
 
+  @override
   Future<void> createEvent({
     required String title,
     required String? clientId,

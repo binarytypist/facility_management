@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
-import '../services/company_service.dart';
+import '../services/company_service.interface.dart';
 import '../models/client.dart';
 
 class CompanyCodeProvider extends ChangeNotifier {
-  final CompanyService _companyService;
+  final ICompanyService _companyService;
   
   CompanyCodeProvider(this._companyService);
 

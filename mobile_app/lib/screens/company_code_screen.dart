@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import '../services/theme_provider.dart';
-import '../services/company_service.dart';
+import '../providers/theme_provider.dart';
+import '../services/company_service.interface.dart';
 import '../providers/company_code_provider.dart';
 import 'assignment_list_screen.dart';
 
@@ -11,7 +11,7 @@ class CompanyCodeScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return ChangeNotifierProvider(
-      create: (context) => CompanyCodeProvider(context.read<CompanyService>()),
+      create: (context) => CompanyCodeProvider(context.read<ICompanyService>()),
       child: const _CompanyCodeView(),
     );
   }
@@ -73,7 +73,7 @@ class _CompanyCodeView extends StatelessWidget {
               borderRadius: BorderRadius.circular(24),
               boxShadow: [
                 BoxShadow(
-                  color: Colors.black.withOpacity(0.1),
+                  color: Colors.black.withValues(alpha: 0.1),
                   blurRadius: 32,
                   offset: const Offset(0, 16),
                 )

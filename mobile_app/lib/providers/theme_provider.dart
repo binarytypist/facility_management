@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
+import 'dart:ui';
+
 class ThemeProvider extends ChangeNotifier {
   static const String _themePrefKey = 'theme_preference';
   ThemeMode _themeMode = ThemeMode.system;
@@ -13,9 +15,7 @@ class ThemeProvider extends ChangeNotifier {
 
   bool get isDarkMode {
     if (_themeMode == ThemeMode.system) {
-      // In a real app we'd query the platform dispatcher, but we'll fall back to false if not mounted
-      final window = WidgetsBinding.instance.window;
-      return window.platformBrightness == Brightness.dark;
+      return PlatformDispatcher.instance.platformBrightness == Brightness.dark;
     }
     return _themeMode == ThemeMode.dark;
   }

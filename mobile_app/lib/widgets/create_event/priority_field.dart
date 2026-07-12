@@ -39,7 +39,7 @@ class PriorityField extends StatelessWidget {
           duration: const Duration(milliseconds: 200),
           padding: const EdgeInsets.symmetric(vertical: 12),
           decoration: BoxDecoration(
-            color: isSelected ? baseColor.withOpacity(0.15) : ThemeConstants.slate950,
+            color: isSelected ? baseColor.withValues(alpha: 0.15) : ThemeConstants.slate950,
             border: Border.all(
               color: isSelected ? baseColor.shade400 : ThemeConstants.slate700,
               width: isSelected ? 2 : 1,
