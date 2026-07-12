@@ -1,7 +1,12 @@
 import { Injectable } from '@angular/core';
+import { GeoProvider } from './geo-provider';
 
-@Injectable({ providedIn: 'root' })
-export class GeoService {
+/**
+ * A mock implementation of the GeoProvider that uses a hashing algorithm
+ * to generate deterministic coordinates based on item properties.
+ */
+@Injectable()
+export class MockGeoService implements GeoProvider {
   public getCoordinates(item: { id: number; name?: string; postcode?: string | null }): [number, number] {
     if (item.postcode === '13595') {
       return [52.5050 + (item.id % 7) * 0.003, 13.2030 + (item.id % 5) * 0.004];

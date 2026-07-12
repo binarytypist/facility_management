@@ -1,71 +1,66 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import '../services/theme_provider.dart';
 import '../services/company_service.dart';
+import '../providers/company_code_provider.dart';
 import 'assignment_list_screen.dart';
 
-class CompanyCodeScreen extends StatefulWidget {
+class CompanyCodeScreen extends StatelessWidget {
   const CompanyCodeScreen({super.key});
 
   @override
-  State<CompanyCodeScreen> createState() => _CompanyCodeScreenState();
+  Widget build(BuildContext context) {
+    return ChangeNotifierProvider(
+      create: (context) => CompanyCodeProvider(context.read<CompanyService>()),
+      child: const _CompanyCodeView(),
+    );
+  }
 }
 
-class _CompanyCodeScreenState extends State<CompanyCodeScreen> {
-  final TextEditingController _codeController = TextEditingController();
-  final CompanyService _companyService = CompanyService();
-  bool _isLoading = false;
-  String? _errorMessage;
+class _CompanyCodeView extends StatelessWidget {
+  const _CompanyCodeView();
 
-  Future<void> _verifyCompanyCode() async {
-    final code = _codeController.text.trim();
-    if (code.isEmpty) {
-      setState(() {
-        _errorMessage = 'Please enter a company code';
-      });
-      return;
-    }
-
-    setState(() {
-      _isLoading = true;
-      _errorMessage = null;
-    });
-
-    try {
-      final matchedClient = await _companyService.verifyCompanyCode(code);
-
-      if (matchedClient != null) {
-        if (mounted) {
-          Navigator.pushReplacement(
-            context,
-            MaterialPageRoute(
-              builder: (context) => AssignmentListScreen(
-                clientId: matchedClient.id,
-                clientName: matchedClient.name,
-              ),
-            ),
-          );
-        }
-      } else {
-        setState(() {
-          _errorMessage = 'Invalid company code. Please try again.';
-        });
-      }
-    } catch (e) {
-      setState(() {
-        _errorMessage = 'Error connecting to server: $e';
-      });
-    } finally {
-      if (mounted) {
-        setState(() {
-          _isLoading = false;
-        });
-      }
+  void _submit(BuildContext context) async {
+    final provider = context.read<CompanyCodeProvider>();
+    final client = await provider.verifyCompanyCode();
+    
+    if (client != null && context.mounted) {
+      Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(
+          builder: (context) => AssignmentListScreen(
+            clientId: client.id,
+            clientName: client.name,
+          ),
+        ),
+      );
     }
   }
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final colorScheme = theme.colorScheme;
+    final provider = context.watch<CompanyCodeProvider>();
+    
     return Scaffold(
-      backgroundColor: const Color(0xFF020617), // slate-950
+      appBar: AppBar(
+        backgroundColor: Colors.transparent,
+        elevation: 0,
+        actions: [
+          Consumer<ThemeProvider>(
+            builder: (context, themeProvider, _) {
+              return IconButton(
+                icon: Icon(themeProvider.isDarkMode ? Icons.light_mode : Icons.dark_mode),
+                color: colorScheme.onSurface,
+                onPressed: () {
+                  themeProvider.toggleTheme(!themeProvider.isDarkMode);
+                },
+              );
+            },
+          ),
+        ],
+      ),
       body: Center(
         child: SingleChildScrollView(
           padding: const EdgeInsets.all(24.0),
@@ -73,12 +68,12 @@ class _CompanyCodeScreenState extends State<CompanyCodeScreen> {
             constraints: const BoxConstraints(maxWidth: 400),
             padding: const EdgeInsets.all(32),
             decoration: BoxDecoration(
-              color: const Color(0xFF0F172A), // slate-900
-              border: Border.all(color: const Color(0xFF1E293B)), // slate-800
+              color: theme.cardColor,
+              border: Border.all(color: theme.dividerColor),
               borderRadius: BorderRadius.circular(24),
               boxShadow: [
                 BoxShadow(
-                  color: Colors.black.withOpacity(0.5),
+                  color: Colors.black.withOpacity(0.1),
                   blurRadius: 32,
                   offset: const Offset(0, 16),
                 )
@@ -88,71 +83,67 @@ class _CompanyCodeScreenState extends State<CompanyCodeScreen> {
               mainAxisSize: MainAxisSize.min,
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
-                const Icon(Icons.business_center, size: 64, color: Color(0xFF6366F1)), // indigo-500
+                Icon(Icons.business_center, size: 64, color: colorScheme.primary),
                 const SizedBox(height: 24),
-                const Text(
+                Text(
                   'Welcome Back',
                   textAlign: TextAlign.center,
-                  style: TextStyle(
-                    fontSize: 28,
+                  style: theme.textTheme.headlineMedium?.copyWith(
                     fontWeight: FontWeight.bold,
-                    color: Color(0xFFF1F5F9), // slate-100
                   ),
                 ),
                 const SizedBox(height: 8),
-                const Text(
+                Text(
                   'Enter your company code to continue',
                   textAlign: TextAlign.center,
-                  style: TextStyle(
-                    fontSize: 14,
-                    color: Color(0xFF94A3B8), // slate-400
+                  style: theme.textTheme.bodyMedium?.copyWith(
+                    color: colorScheme.onSurfaceVariant,
                   ),
                 ),
                 const SizedBox(height: 32),
                 TextField(
-                  controller: _codeController,
-                  style: const TextStyle(color: Color(0xFFE2E8F0)), // slate-200
+                  controller: provider.codeController,
+                  autofocus: true,
+                  textInputAction: TextInputAction.done,
                   decoration: InputDecoration(
                     labelText: 'Company Code',
-                    labelStyle: const TextStyle(color: Color(0xFF64748B)), // slate-500
                     filled: true,
-                    fillColor: const Color(0xFF020617), // slate-950
+                    fillColor: theme.scaffoldBackgroundColor,
                     border: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(12),
-                      borderSide: const BorderSide(color: Color(0xFF334155)), // slate-700
                     ),
                     enabledBorder: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(12),
-                      borderSide: const BorderSide(color: Color(0xFF334155)), // slate-700
+                      borderSide: BorderSide(color: theme.dividerColor),
                     ),
                     focusedBorder: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(12),
-                      borderSide: const BorderSide(color: Color(0xFF6366F1)), // indigo-500
+                      borderSide: BorderSide(color: colorScheme.primary),
                     ),
-                    prefixIcon: const Icon(Icons.vpn_key, color: Color(0xFF64748B)),
+                    prefixIcon: Icon(Icons.vpn_key, color: colorScheme.onSurfaceVariant),
                   ),
-                  onSubmitted: (_) => _verifyCompanyCode(),
+                  onSubmitted: (_) => _submit(context),
                 ),
-                if (_errorMessage != null) ...[
+                if (provider.errorMessage != null) ...[
                   const SizedBox(height: 16),
                   Text(
-                    _errorMessage!,
+                    provider.errorMessage!,
                     textAlign: TextAlign.center,
                     style: const TextStyle(color: Colors.redAccent, fontSize: 14),
                   ),
                 ],
                 const SizedBox(height: 32),
                 ElevatedButton(
-                  onPressed: _isLoading ? null : _verifyCompanyCode,
+                  onPressed: provider.isLoading ? null : () => _submit(context),
                   style: ElevatedButton.styleFrom(
-                    backgroundColor: const Color(0xFF4F46E5), // indigo-600
-                    foregroundColor: Colors.white,
+                    backgroundColor: colorScheme.primary,
+                    foregroundColor: colorScheme.onPrimary,
                     padding: const EdgeInsets.symmetric(vertical: 16),
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(12),
                     ),
                   ),
-                  child: _isLoading
+                  child: provider.isLoading
                       ? const SizedBox(
                           height: 20,
                           width: 20,

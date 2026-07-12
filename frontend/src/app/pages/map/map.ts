@@ -1,7 +1,7 @@
 import { Component, OnInit, OnDestroy, inject } from '@angular/core';
 import { CommonModule, DecimalPipe } from '@angular/common';
 import { MapStore } from './map.store';
-import { MapApiService } from './map-api.service';
+import { MapApiProvider } from './providers/map-api-provider';
 import { LeafletService } from './leaflet.service';
 import { RoutingService } from './routing.service';
 import { Client } from '../../models/client.model';
@@ -18,7 +18,8 @@ import { Agency } from '../../models/agency.model';
 export class MapComponent implements OnInit, OnDestroy {
   protected readonly store = inject(MapStore);
 
-  private readonly api = inject(MapApiService);
+  // Dependency Inversion: Inject API abstraction
+  private readonly api = inject(MapApiProvider);
   private readonly leaflet = inject(LeafletService);
   private readonly routing = inject(RoutingService);
 

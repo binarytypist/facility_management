@@ -1,6 +1,6 @@
 import { Injectable, inject } from '@angular/core';
 import * as L from 'leaflet';
-import { GeoService } from './geo.service';
+import { GeoProvider } from './providers/geo-provider';
 import { Client } from '../../models/client.model';
 import { Agency } from '../../models/agency.model';
 import { RouteResult, CalculatedRouteInfo } from './models/map.model';
@@ -12,7 +12,8 @@ export class LeafletService {
   private agencyMarkers: L.Marker[] = [];
   private routePolyline: L.Polyline | null = null;
 
-  private readonly geo = inject(GeoService);
+  // Dependency Inversion: inject abstraction instead of concrete class
+  private readonly geo = inject(GeoProvider);
 
   public initMap(containerId: string): void {
     if (this.map) {

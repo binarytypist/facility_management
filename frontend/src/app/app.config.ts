@@ -9,6 +9,10 @@ import { MessageService } from 'primeng/api';
 import Aura from '@primeuix/themes/aura';
 
 import { routes } from './app.routes';
+import { GeoProvider } from './pages/map/providers/geo-provider';
+import { MockGeoService } from './pages/map/providers/mock-geo.service';
+import { MapApiProvider } from './pages/map/providers/map-api-provider';
+import { RestMapApiService } from './pages/map/providers/rest-map-api.service';
 
 export const appConfig: ApplicationConfig = {
   providers: [
@@ -29,6 +33,9 @@ export const appConfig: ApplicationConfig = {
       }),
       fallbackLang: 'en',
       lang: 'en'
-    })
+    }),
+    // SOLID: Provide concrete implementations for abstract interfaces
+    { provide: GeoProvider, useClass: MockGeoService },
+    { provide: MapApiProvider, useClass: RestMapApiService }
   ]
 };

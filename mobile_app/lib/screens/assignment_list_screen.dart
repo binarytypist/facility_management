@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import '../services/theme_provider.dart';
 import '../services/work_event_service.dart';
 import '../models/work_event.dart';
 import '../widgets/work_item_card.dart';
@@ -55,17 +57,23 @@ class _AssignmentListScreenState extends State<AssignmentListScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.grey[100],
       appBar: AppBar(
         title: Text(widget.clientName != null ? 'Work Events - ${widget.clientName}' : 'Work Assignments'),
-        backgroundColor: Colors.indigo,
-        foregroundColor: Colors.white,
-        elevation: 0,
         actions: [
           IconButton(
             icon: const Icon(Icons.refresh),
             onPressed: _fetchEvents,
-          )
+          ),
+          Consumer<ThemeProvider>(
+            builder: (context, themeProvider, _) {
+              return IconButton(
+                icon: Icon(themeProvider.isDarkMode ? Icons.light_mode : Icons.dark_mode),
+                onPressed: () {
+                  themeProvider.toggleTheme(!themeProvider.isDarkMode);
+                },
+              );
+            },
+          ),
         ],
       ),
       body: _isLoading
