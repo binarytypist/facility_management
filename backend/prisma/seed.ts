@@ -54,9 +54,9 @@ async function seedMasterData() {
       })
     ),
 
-  ]);
+  ], { timeout: 30000 });
 
-  console.log('✓ Roles, designations, and company types upserted.');
+  console.log('Roles, designations, and company types upserted.');
 
   const workTypes = [
     { name: 'Cleaning', code: 'CLEANING', category: 'structured' },
@@ -83,11 +83,12 @@ async function seedMasterData() {
         update: { name: w.name, category: w.category },
         create: w,
       })
-    )
+    ),
+    { timeout: 30000 }
   );
-  console.log('✓ Hierarchical work types seeded.');
+  console.log('Hierarchical work types seeded.');
 
-  console.log('✓ Master data seeding finished.');
+  console.log('Master data seeding finished.');
 }
 
 async function seedDemoData() {
@@ -107,7 +108,7 @@ async function seedDemoData() {
         { name: 'External PaintCraft Inc.', type: 'external', contactInfo: 'projects@paintcraft.com' },
       ],
     });
-    console.log('✓ Teams seeded.');
+    console.log('Teams seeded.');
   }
 
   // 2. Locations Hierarchy
@@ -144,7 +145,7 @@ async function seedDemoData() {
         { name: 'Water Heater B', type: 'asset', parentId: r103.id },
       ],
     });
-    console.log('✓ Location hierarchy seeded.');
+    console.log('Location hierarchy seeded.');
   }
 
   // 3. Facility Types
@@ -156,7 +157,7 @@ async function seedDemoData() {
         { name: 'Unscheduled Facility', code: 'UNSCHEDULED' },
       ],
     });
-    console.log('✓ Facility types seeded.');
+    console.log('Facility types seeded.');
   }
 
   // 4. Facilities
@@ -175,7 +176,7 @@ async function seedDemoData() {
           { name: 'Emergency Water Pump Facility', facilityTypeId: unschedType.id, locationId: lobbyLoc.id },
         ],
       });
-      console.log('✓ Facilities seeded.');
+      console.log('Facilities seeded.');
     }
   }
 
@@ -195,7 +196,7 @@ async function seedDemoData() {
           { title: 'AC Condenser Inspection', description: 'Verify condenser electrical connections and coolant levels.', facilityId: fac2.id, workTypeId: elecType.id, estimatedDuration: 2.0 },
         ],
       });
-      console.log('✓ Work Items templates seeded.');
+      console.log('Work Items templates seeded.');
     }
   }
 
@@ -314,11 +315,11 @@ async function seedDemoData() {
         },
       });
 
-      console.log('✓ Sample work events and results seeded.');
+      console.log('Sample work events and results seeded.');
     }
   }
 
-  console.log('✓ Demo data seeding finished.');
+  console.log('Demo data seeding finished.');
 }
 
 async function main() {

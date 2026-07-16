@@ -115,11 +115,6 @@ export class Dashboard implements OnInit {
   protected readonly schedulingWorkItem: WritableSignal<any | null> = signal<any | null>(null);
 
   public ngOnInit(): void {
-    const role: string | null = localStorage.getItem('userRole');
-    if (!role) {
-      this.router.navigate(['/login']);
-      return;
-    }
     this.auth.init();
 
     this.loadMasterData();

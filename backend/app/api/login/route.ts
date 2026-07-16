@@ -1,3 +1,4 @@
+import { corsHeaders } from '@/lib/cors';
 import { NextResponse } from 'next/server';
 import bcrypt from 'bcryptjs';
 import { pool, initDB } from '@/lib/db';
@@ -5,13 +6,7 @@ import { pool, initDB } from '@/lib/db';
 let isDbInitialized = false;
 
 // Handle CORS headers
-function corsHeaders() {
-  return {
-    'Access-Control-Allow-Origin': '*',
-    'Access-Control-Allow-Methods': 'POST, OPTIONS',
-    'Access-Control-Allow-Headers': 'Content-Type',
-  };
-}
+
 
 export async function OPTIONS() {
   return new NextResponse(null, {
