@@ -53,7 +53,6 @@ class WorkItemCard extends StatelessWidget {
       margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
       elevation: 2,
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-      color: Colors.white,
       child: InkWell(
         onTap: selectable && onChanged != null
             ? () => onChanged!(!isSelected)
@@ -92,7 +91,7 @@ class WorkItemCard extends StatelessWidget {
                             Container(
                               padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
                               decoration: BoxDecoration(
-                                color: _getPriorityColor(event.priority).withOpacity(0.1),
+                                color: _getPriorityColor(event.priority).withValues(alpha: 0.1),
                                 borderRadius: BorderRadius.circular(4),
                               ),
                               child: Text(
@@ -106,10 +105,10 @@ class WorkItemCard extends StatelessWidget {
                             ),
                             Text(
                               '#${event.id}',
-                              style: const TextStyle(
+                              style: TextStyle(
                                 fontSize: 12,
                                 fontWeight: FontWeight.bold,
-                                color: Colors.grey,
+                                color: Theme.of(context).colorScheme.onSurfaceVariant,
                               ),
                             ),
                           ],
@@ -117,10 +116,10 @@ class WorkItemCard extends StatelessWidget {
                         const SizedBox(height: 8),
                         Text(
                           event.title,
-                          style: const TextStyle(
+                          style: TextStyle(
                             fontSize: 16,
                             fontWeight: FontWeight.bold,
-                            color: Colors.black87,
+                            color: Theme.of(context).colorScheme.onSurface,
                           ),
                         ),
                       ],
@@ -131,12 +130,12 @@ class WorkItemCard extends StatelessWidget {
               const SizedBox(height: 12),
               Row(
                 children: [
-                  const Icon(Icons.location_on, size: 16, color: Colors.grey),
+                  Icon(Icons.location_on, size: 16, color: Theme.of(context).colorScheme.onSurfaceVariant),
                   const SizedBox(width: 4),
                   Expanded(
                     child: Text(
                       '${event.locationName} (${event.locationType})',
-                      style: const TextStyle(fontSize: 12, color: Colors.black54),
+                      style: TextStyle(fontSize: 12, color: Theme.of(context).colorScheme.onSurfaceVariant),
                       maxLines: 1,
                       overflow: TextOverflow.ellipsis,
                     ),
@@ -146,18 +145,18 @@ class WorkItemCard extends StatelessWidget {
               const SizedBox(height: 8),
               Row(
                 children: [
-                  const Icon(Icons.calendar_today, size: 16, color: Colors.grey),
+                  Icon(Icons.calendar_today, size: 16, color: Theme.of(context).colorScheme.onSurfaceVariant),
                   const SizedBox(width: 4),
                   Text(
                     DateFormat.yMMMd().format(event.startDate),
-                    style: const TextStyle(fontSize: 12, color: Colors.black54),
+                    style: TextStyle(fontSize: 12, color: Theme.of(context).colorScheme.onSurfaceVariant),
                   ),
                   if (event.endDate != null) ...[
-                    Text('${event.distance?.toStringAsFixed(1) ?? "0.0"} mi away', style: const TextStyle(color: Colors.black54, fontSize: 13)),
-                    const Text(' - ', style: TextStyle(fontSize: 12, color: Colors.black54)),
+                    Text('${event.distance?.toStringAsFixed(1) ?? "0.0"} mi away', style: TextStyle(color: Theme.of(context).colorScheme.onSurfaceVariant, fontSize: 13)),
+                    Text(' - ', style: TextStyle(fontSize: 12, color: Theme.of(context).colorScheme.onSurfaceVariant)),
                     Text(
                       DateFormat.yMMMd().format(event.endDate!),
-                      style: const TextStyle(fontSize: 12, color: Colors.black54),
+                      style: TextStyle(fontSize: 12, color: Theme.of(context).colorScheme.onSurfaceVariant),
                     ),
                   ],
                 ],
@@ -167,10 +166,10 @@ class WorkItemCard extends StatelessWidget {
                 spacing: 8,
                 runSpacing: 8,
                 children: [
-                  _buildTag(event.workTypeName, Colors.grey.shade200, Colors.black87),
+                  _buildTag(event.workTypeName, Theme.of(context).colorScheme.surfaceContainerHighest, Theme.of(context).colorScheme.onSurface),
                   _buildTag(
                     event.status.toUpperCase(),
-                    _getStatusColor(event.status).withOpacity(0.1),
+                    _getStatusColor(event.status).withValues(alpha: 0.1),
                     _getStatusColor(event.status),
                   ),
                 ],

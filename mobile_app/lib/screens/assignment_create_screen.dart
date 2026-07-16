@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
-import '../../services/work_event_service.dart';
-import '../../models/category.dart';
+import 'package:provider/provider.dart';
+import '../../services/work_event_service.interface.dart';
+import '../../services/company_service.interface.dart';
 import '../../models/work_type.dart';
-import '../../models/team.dart';
 import '../../models/location.dart';
 import '../../constants/theme_constants.dart';
 import '../widgets/create_event/title_field.dart';
@@ -22,7 +22,8 @@ class AssignmentCreateScreen extends StatefulWidget {
 }
 
 class _AssignmentCreateScreenState extends State<AssignmentCreateScreen> {
-  final WorkEventService _workEventService = WorkEventService();
+  late final IWorkEventService _workEventService;
+  late final ICompanyService _companyService;
   
   bool _isLoadingMasterData = true;
   bool _isSaving = false;
@@ -33,6 +34,9 @@ class _AssignmentCreateScreenState extends State<AssignmentCreateScreen> {
 
   // Form State
   String _title = '';
+  String _clientCode = '';
+  String? _resolvedClientId;
+  bool _isValidatingClient = false;
   String? _locationId;
   String? _workTypeId;
   String _priority = 'medium';
@@ -41,17 +45,24 @@ class _AssignmentCreateScreenState extends State<AssignmentCreateScreen> {
   
   // Checklist
   final TextEditingController _checklistController = TextEditingController();
+  final TextEditingController _clientCodeController = TextEditingController();
   final List<String> _checklistItems = [];
 
   @override
   void initState() {
     super.initState();
+    _workEventService = context.read<IWorkEventService>();
+    _companyService = context.read<ICompanyService>();
+    if (widget.clientId != null) {
+      _resolvedClientId = widget.clientId;
+    }
     _loadAllMasterData();
   }
 
   @override
   void dispose() {
     _checklistController.dispose();
+    _clientCodeController.dispose();
     super.dispose();
   }
 
@@ -108,11 +119,41 @@ class _AssignmentCreateScreenState extends State<AssignmentCreateScreen> {
     });
   }
 
+  Future<void> _verifyClientCode(String code) async {
+    if (code.isEmpty) {
+      setState(() {
+        _resolvedClientId = null;
+      });
+      return;
+    }
+
+    setState(() {
+      _isValidatingClient = true;
+    });
+
+    try {
+      final client = await _companyService.verifyCompanyCode(code);
+      if (mounted) {
+        setState(() {
+          _resolvedClientId = client?.id.toString();
+          _isValidatingClient = false;
+        });
+      }
+    } catch (e) {
+      if (mounted) {
+        setState(() {
+          _resolvedClientId = null;
+          _isValidatingClient = false;
+        });
+      }
+    }
+  }
+
   Future<void> _submitCreateEvent() async {
-    final effectiveClientId = widget.clientId;
+    final effectiveClientId = _resolvedClientId ?? widget.clientId;
     if (_title.isEmpty || effectiveClientId == null || _locationId == null) {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Please fill in all required fields: Title and Location'), backgroundColor: Colors.red),
+        const SnackBar(content: Text('Please fill in all required fields: Title, Location, and Valid Client Code'), backgroundColor: Colors.red),
       );
       return;
     }
@@ -209,6 +250,46 @@ class _AssignmentCreateScreenState extends State<AssignmentCreateScreen> {
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
+                          if (widget.clientId == null) ...[
+                            Text(
+                              'Client Code *',
+                              style: const TextStyle(color: ThemeConstants.slate400, fontSize: 12, fontWeight: FontWeight.bold),
+                            ),
+                            const SizedBox(height: 8),
+                            TextField(
+                              controller: _clientCodeController,
+                              style: const TextStyle(color: ThemeConstants.slate200),
+                              decoration: InputDecoration(
+                                hintText: 'Enter Client Code',
+                                hintStyle: const TextStyle(color: ThemeConstants.slate500),
+                                filled: true,
+                                fillColor: ThemeConstants.slate950,
+                                suffixIcon: _isValidatingClient 
+                                  ? const SizedBox(width: 16, height: 16, child: Padding(padding: EdgeInsets.all(12), child: CircularProgressIndicator(strokeWidth: 2)))
+                                  : _resolvedClientId != null 
+                                    ? const Icon(Icons.check_circle, color: Colors.green)
+                                    : _clientCodeController.text.isNotEmpty 
+                                      ? const Icon(Icons.error, color: Colors.red)
+                                      : null,
+                                border: OutlineInputBorder(
+                                  borderRadius: BorderRadius.circular(12),
+                                  borderSide: const BorderSide(color: ThemeConstants.slate700),
+                                ),
+                                enabledBorder: OutlineInputBorder(
+                                  borderRadius: BorderRadius.circular(12),
+                                  borderSide: const BorderSide(color: ThemeConstants.slate700),
+                                ),
+                                focusedBorder: OutlineInputBorder(
+                                  borderRadius: BorderRadius.circular(12),
+                                  borderSide: const BorderSide(color: Colors.indigo),
+                                ),
+                              ),
+                              onChanged: (val) {
+                                _verifyClientCode(val);
+                              },
+                            ),
+                            const SizedBox(height: 24),
+                          ],
                           TitleField(
                             title: _title,
                             description: _description,

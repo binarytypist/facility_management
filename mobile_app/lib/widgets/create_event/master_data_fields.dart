@@ -1,8 +1,6 @@
 import 'package:flutter/material.dart';
 import '../../constants/theme_constants.dart';
-import '../../models/category.dart';
 import '../../models/work_type.dart';
-import '../../models/team.dart';
 
 class MasterDataFields extends StatelessWidget {
   final String? structureType;
@@ -54,7 +52,7 @@ class MasterDataFields extends StatelessWidget {
           decoration: createInputDecoration('Select Structure'),
           dropdownColor: ThemeConstants.slate900,
           style: const TextStyle(color: ThemeConstants.slate200, fontSize: 14),
-          value: structureType,
+          initialValue: structureType,
           items: const [
             DropdownMenuItem(value: 'structured', child: Text('Structured Work')),
             DropdownMenuItem(value: 'semi-structured', child: Text('Semi-Structured Work')),
@@ -75,7 +73,7 @@ class MasterDataFields extends StatelessWidget {
           decoration: createInputDecoration('Select Work Type'),
           dropdownColor: ThemeConstants.slate900,
           style: const TextStyle(color: ThemeConstants.slate200, fontSize: 14),
-          value: workTypeId,
+          initialValue: workTypeId,
           items: workTypes.map((wt) {
             return DropdownMenuItem<String>(
               value: wt.id,

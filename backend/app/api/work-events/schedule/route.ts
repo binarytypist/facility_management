@@ -59,14 +59,13 @@ export async function POST(request: Request) {
     // 2. Insert into work_events as a scheduled event
     const [result] = await connection.query(`
       INSERT INTO work_events (
-        title, description, service_category_id, work_type_id, location_id,
+        title, description, work_type_id, location_id,
         facility_id, work_item_id, scheduled_date, schedule_type,
         structure_type, execution_type, priority, status
-      ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, 'scheduled', 'structured', 'internal', 'medium', 'created')
+      ) VALUES (?, ?, ?, ?, ?, ?, ?, 'scheduled', 'structured', 'internal', 'medium', 'created')
     `, [
       item.title,
       item.description || `Scheduled from work item backlog template.`,
-      item.service_category_id,
       item.work_type_id,
       item.location_id,
       item.facility_id,

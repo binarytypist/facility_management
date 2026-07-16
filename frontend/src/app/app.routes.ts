@@ -4,14 +4,17 @@ import { Landing } from './pages/landing/landing';
 import { Dashboard } from './pages/dashboard/dashboard';
 import { Register } from './pages/register/register';
 import { Layout } from './components/layout/layout';
+import { AuthGuard } from './guards/auth.guard';
+
 export const routes: Routes = [
-  { path: '', redirectTo: 'login', pathMatch: 'full' },
+  { path: '', redirectTo: 'dashboard', pathMatch: 'full' },
   { path: 'login', component: Login },
   { path: 'register', component: Register },
   { path: 'landing', component: Landing },
   {
     path: '',
     component: Layout,
+    canActivate: [AuthGuard],
     children: [
       { path: 'dashboard', component: Dashboard },
       { path: 'map', loadComponent: () => import('./pages/map/map').then(m => m.MapComponent) },

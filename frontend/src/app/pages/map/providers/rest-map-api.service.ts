@@ -1,12 +1,17 @@
 import { Injectable, inject } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
-import { environment } from '../../../environments/environment';
-import { Client } from '../../models/client.model';
-import { Agency } from '../../models/agency.model';
+import { environment } from '../../../../environments/environment';
+import { Client } from '../../../models/client.model';
+import { Agency } from '../../../models/agency.model';
+import { MapApiProvider } from './map-api-provider';
 
-@Injectable({ providedIn: 'root' })
-export class MapApiService {
+/**
+ * A concrete implementation of MapApiProvider that uses Angular's HttpClient
+ * to fetch data from a REST API.
+ */
+@Injectable()
+export class RestMapApiService implements MapApiProvider {
   private readonly http = inject(HttpClient);
   private readonly apiUrl = environment.apiUrl;
 

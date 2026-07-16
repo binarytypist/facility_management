@@ -41,8 +41,8 @@ export async function GET(
     const [rows] = await pool.query(`
       SELECT 
         we.*, 
-        sc.name as service_category_name, 
-        sc.code as service_category_code,
+        null as service_category_name, 
+        null as service_category_code,
         wt.name as work_type_name, 
         wt.code as work_type_code,
         loc.name as location_name, 
@@ -60,7 +60,6 @@ export async function GET(
         ae.first_name as assigned_employee_first_name,
         ae.last_name as assigned_employee_last_name
       FROM work_events we
-      LEFT JOIN service_categories sc ON we.service_category_id = sc.id
       LEFT JOIN work_types wt ON we.work_type_id = wt.id
       LEFT JOIN locations loc ON we.location_id = loc.id
       LEFT JOIN teams t ON we.assigned_team_id = t.id
@@ -187,10 +186,7 @@ export async function PUT(
       paramsList.push(client_id ? parseInt(client_id, 10) : null);
     }
 
-    if (service_category_id !== undefined) {
-      updates.push('service_category_id = ?');
-      paramsList.push(parseInt(service_category_id, 10));
-    }
+
 
     if (work_type_id !== undefined) {
       updates.push('work_type_id = ?');

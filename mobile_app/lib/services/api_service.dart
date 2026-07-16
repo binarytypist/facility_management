@@ -3,8 +3,10 @@ import 'dart:convert';
 import 'dart:io';
 import 'package:http/http.dart' as http;
 import '../exceptions/api_exception.dart';
+import 'api_service.interface.dart';
 
-class ApiService {
+class ApiService implements IApiService {
+  @override
   Future<dynamic> get(String url) async {
     try {
       final response = await http.get(Uri.parse(url)).timeout(const Duration(seconds: 15));
@@ -13,12 +15,13 @@ class ApiService {
       throw NetworkException('No Internet connection');
     } on TimeoutException {
       throw NetworkException('Request timed out');
-    } catch (e, stackTrace) {
+    } catch (e) {
       // Avoid printing stack trace in production, but useful for debugging
       throw ApiException('Unexpected error occurred: $e');
     }
   }
 
+  @override
   Future<dynamic> post(String url, Map<String, dynamic> body) async {
     try {
       final response = await http

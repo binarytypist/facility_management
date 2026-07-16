@@ -1,7 +1,7 @@
 import { prisma } from '../../lib/db';
 
 export const agencyInclude = {
-  serviceCategory: true,
+  companyType: true,
   facility: true,
   _count: {
     select: { employees: true },
@@ -25,16 +25,22 @@ export const AgencyRepository = {
   },
 
   create(data: any) {
+    const { serviceCategoryId, ...rest } = data;
+    const prismaData = { ...rest, companyTypeId: serviceCategoryId };
     return prisma.agency.create({
-      data,
+      data: prismaData,
       include: agencyInclude,
     });
   },
 
   update(id: number, data: any) {
+    const { serviceCategoryId, ...rest } = data;
+    const prismaData = serviceCategoryId !== undefined 
+      ? { ...rest, companyTypeId: serviceCategoryId } 
+      : rest;
     return prisma.agency.update({
       where: { id },
-      data,
+      data: prismaData,
       include: agencyInclude,
     });
   },

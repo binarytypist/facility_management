@@ -1,0 +1,64 @@
+{
+  "realm": "geo-task-realm",
+  "enabled": true,
+  "clients": [
+    {
+      "clientId": "geo-task-web-client",
+      "enabled": true,
+      "publicClient": true,
+      "directAccessGrantsEnabled": true,
+      "standardFlowEnabled": true,
+      "implicitFlowEnabled": false,
+      "redirectUris": ["http://localhost:4200/*", "http://localhost:3000/*"],
+      "webOrigins": ["+", "http://localhost:4200", "http://localhost:3000"]
+    },
+    {
+      "clientId": "geo-task-mobile-client",
+      "enabled": true,
+      "publicClient": true,
+      "directAccessGrantsEnabled": true,
+      "standardFlowEnabled": true,
+      "implicitFlowEnabled": false,
+      "redirectUris": ["*"],
+      "webOrigins": ["+"]
+    }
+  ],
+  "users": [
+    {
+      "username": "user",
+      "enabled": true,
+      "email": "user@geotask.com",
+      "firstName": "Standard",
+      "lastName": "User",
+      "credentials": [
+        {
+          "type": "password",
+          "value": "password",
+          "temporary": false
+        }
+      ],
+      "realmRoles": ["user"]
+    },
+    {
+      "username": "admin",
+      "enabled": true,
+      "email": "admin@geotask.com",
+      "firstName": "Admin",
+      "lastName": "User",
+      "credentials": [
+        {
+          "type": "password",
+          "value": "admin",
+          "temporary": false
+        }
+      ],
+      "realmRoles": ["admin"]
+    }
+  ],
+  "roles": {
+    "realm": [
+      { "name": "admin", "description": "Administrator" },
+      { "name": "user", "description": "Standard User" }
+    ]
+  }
+}

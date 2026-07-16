@@ -53,19 +53,17 @@ export async function POST(request: Request) {
       // For the sake of the exercise, we will assume the CSV contains facility_id, service_category_id, work_type_id if we want a robust import.
       // If it doesn't, we skip rows that don't map perfectly.
       const facility_id = obj['facility_id'] || 1; // Fallback
-      const service_category_id = obj['service_category_id'] || 1;
       const work_type_id = obj['work_type_id'] || 1;
       const client_id = obj['client_id'] || null;
 
       if (obj['title']) {
         await pool.query(
-          'INSERT INTO work_items (title, description, facility_id, client_id, service_category_id, work_type_id, estimated_duration) VALUES (?, ?, ?, ?, ?, ?, ?)',
+          'INSERT INTO work_items (title, description, facility_id, client_id, work_type_id, estimated_duration) VALUES (?, ?, ?, ?, ?, ?)',
           [
             obj['title'],
             obj['description'] || '',
             facility_id,
             client_id,
-            service_category_id,
             work_type_id,
             parseFloat(obj['estimated_duration'] || '1.0')
           ]

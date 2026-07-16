@@ -29,6 +29,7 @@ export class FacilityCreate implements OnInit {
     title: '',
     description: '',
     client_id: '',
+    client_code: '',
     start_date: new Date(),
     end_date: (() => {
       const d = new Date();
@@ -76,11 +77,26 @@ export class FacilityCreate implements OnInit {
     });
   }
 
-  protected getSelectedClientCode(): string {
+  protected onClientCodeChange(code: string): void {
+    if (!code) {
+      this.newEvent.set({ ...this.newEvent(), client_id: '' });
+      return;
+    }
+    
+    // Attempt to lookup client by code
+    const client = this.clients().find(c => c.code && c.code.toLowerCase() === code.toLowerCase());
+    if (client) {
+      this.newEvent.set({ ...this.newEvent(), client_id: client.id });
+    } else {
+      this.newEvent.set({ ...this.newEvent(), client_id: '' });
+    }
+  }
+
+  protected getSelectedClientName(): string {
     const clientId = this.newEvent().client_id;
     if (!clientId) return '';
     const client = this.clients().find(c => c.id == clientId);
-    return client?.code || '';
+    return client?.name || '';
   }
 
   protected getFilteredWorkTypes(): any[] {

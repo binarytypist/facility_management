@@ -13,9 +13,9 @@ export function toAgencyDTO(a: any) {
     other_info: a.otherInfo,
     is_active: a.isActive,
     facility_id: a.facilityId,
-    service_category_id: a.serviceCategoryId,
-    service_category_name: a.serviceCategory?.name ?? null,
-    facility_name: a.facility?.name ?? null,
+    service_category_id: a.companyTypeId,
+    service_category_name: (a as any).companyType?.name ?? null,
+    facility_name: (a as any).facility?.name ?? null,
     employee_count: a._count?.employees ?? 0,
   };
 }

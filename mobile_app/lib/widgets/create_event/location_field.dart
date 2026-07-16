@@ -24,7 +24,7 @@ class LocationField extends StatelessWidget {
           decoration: createInputDecoration('Select Location'),
           dropdownColor: ThemeConstants.slate900,
           style: const TextStyle(color: ThemeConstants.slate200, fontSize: 14),
-          value: locationId,
+          initialValue: locationId,
           items: locations.map((loc) {
             return DropdownMenuItem<String>(
               value: loc.id,

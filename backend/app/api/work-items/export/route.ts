@@ -28,13 +28,12 @@ export async function GET() {
         w.description,
         f.name as facility,
         c.name as client,
-        sc.name as service_category,
+        null as service_category,
         wt.name as work_type,
         w.estimated_duration
       FROM work_items w
       JOIN facilities f ON w.facility_id = f.id
       LEFT JOIN clients c ON w.client_id = c.id
-      JOIN service_categories sc ON w.service_category_id = sc.id
       JOIN work_types wt ON w.work_type_id = wt.id
       ORDER BY w.id ASC
     `) as any[];
