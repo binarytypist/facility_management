@@ -24,8 +24,9 @@ if (globalForPrisma.prisma) {
     user,
     password,
     database,
+    connectionLimit: 150,
     allowPublicKeyRetrieval: true,
-  });
+  } as any);
 
   prismaInstance = new PrismaClient({
     adapter,

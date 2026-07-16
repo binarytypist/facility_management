@@ -52,7 +52,7 @@ export const appConfig: ApplicationConfig = {
     { provide: MapApiProvider, useClass: RestMapApiService },
     provideKeycloak({
       config: {
-        url: 'http://localhost:8081',
+        url: 'http://localhost:8080',
         realm: 'geo-task-realm',
         clientId: 'geo-task-web-client'
       },

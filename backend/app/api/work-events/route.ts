@@ -1,15 +1,10 @@
+import { corsHeaders } from '@/lib/cors';
 import { NextResponse } from 'next/server';
 import { pool, initDB } from '@/lib/db';
 
 let isDbInitialized = false;
 
-function corsHeaders() {
-  return {
-    'Access-Control-Allow-Origin': '*',
-    'Access-Control-Allow-Methods': 'GET, POST, OPTIONS',
-    'Access-Control-Allow-Headers': 'Content-Type',
-  };
-}
+
 
 export async function OPTIONS() {
   return new NextResponse(null, {
