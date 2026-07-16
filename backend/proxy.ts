@@ -12,7 +12,7 @@ const JWKS_URI = `${KEYCLOAK_URL}/realms/${REALM}/protocol/openid-connect/certs`
 // Cache the JWKS using jose's built-in remote JWK set
 const JWKS = jose.createRemoteJWKSet(new URL(JWKS_URI));
 
-export async function middleware(request: NextRequest) {
+export async function proxy(request: NextRequest) {
   // Define routes that do NOT require authentication
   const publicRoutes = ['/api/login', '/api/register'];
   

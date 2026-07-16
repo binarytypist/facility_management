@@ -5,6 +5,7 @@
 @theme {
   --color-primary: #3b82f6;
 }
+@custom-variant dark (&:where(.dark, .dark *));
 
 html, body {
   margin: 0;

@@ -8,7 +8,7 @@ export function buildAgencyWhere(filter: AgencyFilterDTO) {
   }
 
   if (filter.serviceCategoryIds && filter.serviceCategoryIds.length > 0) {
-    where.serviceCategoryId = {
+    where.companyTypeId = {
       in: filter.serviceCategoryIds,
     };
   }

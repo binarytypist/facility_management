@@ -58,34 +58,34 @@ async function seedMasterData() {
 
   console.log('✓ Roles, designations, and company types upserted.');
 
-    const workTypes = [
-      { name: 'Cleaning', code: 'CLEANING', category: 'structured' },
-      { name: 'Laundry', code: 'LAUNDRY', category: 'structured' },
-      { name: 'Waste Collection', code: 'WASTE_MGMT', category: 'structured' },
-      { name: 'Preventive Maintenance', code: 'PREVENTIVE', category: 'structured' },
-      { name: 'Security Patrol', code: 'SECURITY', category: 'structured' },
-      { name: 'Room Preparation', code: 'ROOM_PREP', category: 'semi-structured' },
-      { name: 'Equipment Setup', code: 'EQUIP_SETUP', category: 'semi-structured' },
-      { name: 'Minor Repair', code: 'MINOR_REPAIR', category: 'semi-structured' },
-      { name: 'Inspection', code: 'INSPECTION', category: 'semi-structured' },
-      { name: 'Furniture Move', code: 'FURN_MOVE', category: 'semi-structured' },
-      { name: 'Emergency Repair', code: 'EMERG_REPAIR', category: 'unstructured' },
-      { name: 'Water Leak', code: 'WATER_LEAK', category: 'unstructured' },
-      { name: 'Flood Cleanup', code: 'FLOOD_CLEAN', category: 'unstructured' },
-      { name: 'Power Failure', code: 'POWER_FAIL', category: 'unstructured' },
-      { name: 'Accident Response', code: 'ACCIDENT_RESP', category: 'unstructured' },
-    ];
+  const workTypes = [
+    { name: 'Cleaning', code: 'CLEANING', category: 'structured' },
+    { name: 'Laundry', code: 'LAUNDRY', category: 'structured' },
+    { name: 'Waste Collection', code: 'WASTE_MGMT', category: 'structured' },
+    { name: 'Preventive Maintenance', code: 'PREVENTIVE', category: 'structured' },
+    { name: 'Security Patrol', code: 'SECURITY', category: 'structured' },
+    { name: 'Room Preparation', code: 'ROOM_PREP', category: 'semi-structured' },
+    { name: 'Equipment Setup', code: 'EQUIP_SETUP', category: 'semi-structured' },
+    { name: 'Minor Repair', code: 'MINOR_REPAIR', category: 'semi-structured' },
+    { name: 'Inspection', code: 'INSPECTION', category: 'semi-structured' },
+    { name: 'Furniture Move', code: 'FURN_MOVE', category: 'semi-structured' },
+    { name: 'Emergency Repair', code: 'EMERG_REPAIR', category: 'unstructured' },
+    { name: 'Water Leak', code: 'WATER_LEAK', category: 'unstructured' },
+    { name: 'Flood Cleanup', code: 'FLOOD_CLEAN', category: 'unstructured' },
+    { name: 'Power Failure', code: 'POWER_FAIL', category: 'unstructured' },
+    { name: 'Accident Response', code: 'ACCIDENT_RESP', category: 'unstructured' },
+  ];
 
-    await prisma.$transaction(
-      workTypes.map((w) =>
-        prisma.workType.upsert({
-          where: { code: w.code },
-          update: { name: w.name, category: w.category },
-          create: w,
-        })
-      )
-    );
-    console.log('✓ Hierarchical work types seeded.');
+  await prisma.$transaction(
+    workTypes.map((w) =>
+      prisma.workType.upsert({
+        where: { code: w.code },
+        update: { name: w.name, category: w.category },
+        create: w,
+      })
+    )
+  );
+  console.log('✓ Hierarchical work types seeded.');
 
   console.log('✓ Master data seeding finished.');
 }

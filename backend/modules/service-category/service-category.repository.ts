@@ -2,32 +2,32 @@ import { prisma } from '../../lib/db';
 
 export const ServiceCategoryRepository = {
   findAll() {
-    return prisma.serviceCategory.findMany({
+    return prisma.companyType.findMany({
       orderBy: { id: 'asc' },
     });
   },
 
   findById(id: number) {
-    return prisma.serviceCategory.findUnique({
+    return prisma.companyType.findUnique({
       where: { id },
     });
   },
 
   create(name: string, code: string) {
-    return prisma.serviceCategory.create({
+    return prisma.companyType.create({
       data: { name, code: code.toUpperCase() },
     });
   },
 
   update(id: number, name: string, code: string) {
-    return prisma.serviceCategory.update({
+    return prisma.companyType.update({
       where: { id },
       data: { name, code: code.toUpperCase() },
     });
   },
 
   delete(id: number) {
-    return prisma.serviceCategory.delete({
+    return prisma.companyType.delete({
       where: { id },
     });
   },

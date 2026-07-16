@@ -1,4 +1,4 @@
-import { Component, signal, computed } from '@angular/core';
+import { Component, signal, computed, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 interface WorkType {
@@ -8,6 +8,8 @@ interface WorkType {
   status: 'Active' | 'Inactive';
 }
 
+import { Router } from '@angular/router';
+
 @Component({
   selector: 'app-event-config',
   standalone: true,
@@ -15,6 +17,7 @@ interface WorkType {
   templateUrl: './event-config.html'
 })
 export class EventConfigComponent {
+  protected readonly router = inject(Router);
   workTypes = signal<WorkType[]>([
     { id: '1', name: 'Cleaning', category: 'Structured', status: 'Active' },
     { id: '2', name: 'Laundry', category: 'Structured', status: 'Active' },

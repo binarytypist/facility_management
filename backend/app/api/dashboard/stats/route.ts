@@ -98,15 +98,15 @@ export async function GET(request: Request) {
     // 6. Cost breakdown by Category
     const [categoryRows] = await pool.query(`
       SELECT 
-        sc.name as category_name, 
-        sc.code as category_code,
+        wt.name as category_name, 
+        wt.code as category_code,
         SUM(wr.cost) as total_cost, 
         COUNT(we.id) as count
       FROM work_events we
-      JOIN service_categories sc ON we.service_category_id = sc.id
+      JOIN work_types wt ON we.work_type_id = wt.id
       JOIN work_results wr ON we.id = wr.work_event_id
       WHERE 1=1 ${locationFilterSql}
-      GROUP BY sc.id
+      GROUP BY wt.id
       ORDER BY total_cost DESC
     `) as any[];
 

@@ -1,5 +1,5 @@
 import { ApplicationConfig, provideBrowserGlobalErrorListeners } from '@angular/core';
-import { provideKeycloak, includeBearerTokenInterceptor, withAutoRefreshToken } from 'keycloak-angular';
+import { provideKeycloak, includeBearerTokenInterceptor, INCLUDE_BEARER_TOKEN_INTERCEPTOR_CONFIG, createInterceptorCondition, IncludeBearerTokenCondition } from 'keycloak-angular';
 import { provideRouter } from '@angular/router';
 import { provideAnimationsAsync } from '@angular/platform-browser/animations/async';
 import { providePrimeNG } from 'primeng/config';
@@ -20,10 +20,22 @@ export const appConfig: ApplicationConfig = {
     provideBrowserGlobalErrorListeners(),
     provideRouter(routes),
     provideAnimationsAsync(),
+    {
+      provide: INCLUDE_BEARER_TOKEN_INTERCEPTOR_CONFIG,
+      useValue: [
+        createInterceptorCondition<IncludeBearerTokenCondition>({
+          urlPattern: /.*/i,
+          bearerPrefix: 'Bearer'
+        })
+      ]
+    },
     provideHttpClient(withInterceptors([includeBearerTokenInterceptor])),
     providePrimeNG({
       theme: {
-        preset: Aura
+        preset: Aura,
+        options: {
+          darkModeSelector: '.dark'
+        }
       }
     }),
     MessageService,
@@ -48,12 +60,7 @@ export const appConfig: ApplicationConfig = {
         onLoad: 'login-required',
         checkLoginIframe: false,
         silentCheckSsoRedirectUri: window.location.origin + '/assets/silent-check-sso.html'
-      },
-      features: [
-        withAutoRefreshToken({
-          sessionTimeout: 60000
-        })
-      ]
+      }
     })
   ]
 };

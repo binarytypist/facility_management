@@ -1,4 +1,4 @@
-import { Component, OnInit, OnDestroy, inject } from '@angular/core';
+import { Component, OnInit, OnDestroy, AfterViewInit, inject } from '@angular/core';
 import { CommonModule, DecimalPipe } from '@angular/common';
 import { MapStore } from './map.store';
 import { MapApiProvider } from './providers/map-api-provider';
@@ -15,7 +15,7 @@ import { Agency } from '../../models/agency.model';
   styleUrl: './map.css',
   providers: [LeafletService]
 })
-export class MapComponent implements OnInit, OnDestroy {
+export class MapComponent implements OnInit, OnDestroy, AfterViewInit {
   protected readonly store = inject(MapStore);
 
   // Dependency Inversion: Inject API abstraction
@@ -32,6 +32,10 @@ export class MapComponent implements OnInit, OnDestroy {
 
   public ngOnInit(): void {
     this.loadData();
+  }
+
+  public ngAfterViewInit(): void {
+    this.initMap();
   }
 
   public ngOnDestroy(): void {
