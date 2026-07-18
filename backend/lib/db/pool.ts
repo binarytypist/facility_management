@@ -5,14 +5,16 @@ const user = process.env.MYSQL_USER || 'root';
 const password = process.env.MYSQL_PASSWORD || '';
 const database = process.env.MYSQL_DATABASE || 'geo_task_db';
 
-export const pool = mysql.createPool({
-  host,
-  user,
-  password,
-  database,
-  waitForConnections: true,
-  connectionLimit: 10,
-  queueLimit: 0
-});
+export const pool = process.env.DATABASE_URL
+  ? mysql.createPool(process.env.DATABASE_URL)
+  : mysql.createPool({
+      host,
+      user,
+      password,
+      database,
+      waitForConnections: true,
+      connectionLimit: 10,
+      queueLimit: 0
+    });
 
 export default pool;

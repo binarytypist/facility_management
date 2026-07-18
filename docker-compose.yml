@@ -8,8 +8,9 @@ services:
       KEYCLOAK_ADMIN: admin
       KEYCLOAK_ADMIN_PASSWORD: admin
       KC_DB: dev-file
+      KC_HEALTH_ENABLED: "true"
     ports:
-      - 8081:8080
+      - "8080:8080"
     command: 
       - start-dev
       - --import-realm
