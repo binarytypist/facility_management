@@ -33,7 +33,7 @@ jobs:
           node-version: 20
 
       - name: Start Keycloak via Docker Compose
-        run: docker-compose up -d keycloak
+        run: docker compose up -d keycloak
         
       - name: Wait for Keycloak
         run: |
@@ -53,7 +53,7 @@ jobs:
           # Wait for DB push to be available
           sleep 2
           # If there is a seed script, it will execute here
-          npm run prisma seed || echo "Seed skipped or failed"
+          npx prisma db seed || echo "Seed skipped or failed"
         env:
           DATABASE_URL: mysql://root:admin@127.0.0.1:3306/geo_task_db?allowPublicKeyRetrieval=true
           MYSQL_HOST: 127.0.0.1
@@ -76,6 +76,11 @@ jobs:
           MYSQL_DATABASE: geo_task_db
           KEYCLOAK_URL: http://localhost:8080
           KEYCLOAK_REALM: geo-task-realm
+
+      - name: Wait for Backend
+        run: |
+          timeout 60 bash -c 'until curl --silent --fail http://localhost:3000 > /dev/null; do sleep 5; done'
+          echo "Backend is up!"
 
       - name: Install Frontend Dependencies
         working-directory: ./frontend
