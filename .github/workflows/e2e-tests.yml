@@ -55,6 +55,7 @@ jobs:
       - name: Setup Database (Prisma)
         working-directory: ./backend
         run: |
+          npx prisma generate
           npx prisma db push
           # Wait for DB push to be available
           sleep 2
