@@ -30,7 +30,7 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: 20
+          node-version: 22
 
       - name: Start Keycloak via Docker Compose
         run: |
@@ -58,8 +58,8 @@ jobs:
           npx prisma db push
           # Wait for DB push to be available
           sleep 2
-          # If there is a seed script, it will execute here
-          npx prisma db seed || echo "Seed skipped or failed"
+          # Execute seed script and fail if it errors
+          npx prisma db seed
         env:
           DATABASE_URL: mysql://root:admin@127.0.0.1:3306/geo_task_db?allowPublicKeyRetrieval=true
           MYSQL_HOST: 127.0.0.1
@@ -72,7 +72,7 @@ jobs:
 
       - name: Start Backend Service
         working-directory: ./backend
-        run: npm run dev &
+        run: npm run dev > backend.log 2>&1 &
         env:
           DATABASE_URL: mysql://root:admin@127.0.0.1:3306/geo_task_db?allowPublicKeyRetrieval=true
           MYSQL_HOST: 127.0.0.1
@@ -107,3 +107,8 @@ jobs:
           name: playwright-report
           path: frontend/playwright-report/
           retention-days: 30
+
+      - name: Show backend logs
+        if: always()
+        working-directory: ./backend
+        run: cat backend.log
