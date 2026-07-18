@@ -36,6 +36,7 @@ jobs:
         run: |
           docker compose up -d keycloak
           docker ps
+          docker compose logs keycloak
         
       - name: Wait for Keycloak
         run: |
