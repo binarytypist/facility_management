@@ -67,7 +67,7 @@ jobs:
           MYSQL_USER: root
           MYSQL_PASSWORD: admin
           MYSQL_DATABASE: geo_task_db
-          KEYCLOAK_URL: http://127.0.0.1:8080
+          KEYCLOAK_URL: http://localhost:8080
           KEYCLOAK_REALM: geo-task-realm
 
       - name: Start Backend Service
@@ -80,7 +80,7 @@ jobs:
           MYSQL_USER: root
           MYSQL_PASSWORD: admin
           MYSQL_DATABASE: geo_task_db
-          KEYCLOAK_URL: http://127.0.0.1:8080
+          KEYCLOAK_URL: http://localhost:8080
           KEYCLOAK_REALM: geo-task-realm
 
       - name: Wait for Backend
