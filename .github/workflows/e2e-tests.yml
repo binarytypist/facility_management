@@ -2,15 +2,26 @@ name: E2E Tests
 
 on:
   push:
-    branches:
-      - main
   pull_request:
-    branches:
-      - main
 
 jobs:
   test:
+    timeout-minutes: 60
     runs-on: ubuntu-latest
+
+    services:
+      mysql:
+        image: mysql:8.0
+        env:
+          MYSQL_ROOT_PASSWORD: admin
+          MYSQL_DATABASE: geo_task_db
+        ports:
+          - 3306:3306
+        options: >-
+          --health-cmd="mysqladmin ping -h localhost -u root -padmin"
+          --health-interval=10s
+          --health-timeout=5s
+          --health-retries=10
 
     steps:
       - name: Checkout code
@@ -21,5 +32,67 @@ jobs:
         with:
           node-version: 20
 
-      - name: Check Node version
-        run: node --version
+      - name: Start Keycloak via Docker Compose
+        run: docker-compose up -d keycloak
+        
+      - name: Wait for Keycloak
+        run: |
+          echo "Waiting for Keycloak to start..."
+          # Wait up to 60 seconds for Keycloak to respond on port 8080
+          timeout 60 bash -c 'until curl --output /dev/null --silent --head --fail http://localhost:8080; do printf "."; sleep 5; done'
+          echo "Keycloak is up!"
+
+      - name: Install Backend Dependencies
+        working-directory: ./backend
+        run: npm ci || npm install
+
+      - name: Setup Database (Prisma)
+        working-directory: ./backend
+        run: |
+          npx prisma db push
+          # Wait for DB push to be available
+          sleep 2
+          # If there is a seed script, it will execute here
+          npm run prisma seed || echo "Seed skipped or failed"
+        env:
+          DATABASE_URL: mysql://root:admin@127.0.0.1:3306/geo_task_db?allowPublicKeyRetrieval=true
+          MYSQL_HOST: 127.0.0.1
+          MYSQL_PORT: 3306
+          MYSQL_USER: root
+          MYSQL_PASSWORD: admin
+          MYSQL_DATABASE: geo_task_db
+          KEYCLOAK_URL: http://localhost:8080
+          KEYCLOAK_REALM: geo-task-realm
+
+      - name: Start Backend Service
+        working-directory: ./backend
+        run: npm run dev &
+        env:
+          DATABASE_URL: mysql://root:admin@127.0.0.1:3306/geo_task_db?allowPublicKeyRetrieval=true
+          MYSQL_HOST: 127.0.0.1
+          MYSQL_PORT: 3306
+          MYSQL_USER: root
+          MYSQL_PASSWORD: admin
+          MYSQL_DATABASE: geo_task_db
+          KEYCLOAK_URL: http://localhost:8080
+          KEYCLOAK_REALM: geo-task-realm
+
+      - name: Install Frontend Dependencies
+        working-directory: ./frontend
+        run: npm ci || npm install
+
+      - name: Install Playwright Browsers
+        working-directory: ./frontend
+        run: npx playwright install --with-deps
+
+      - name: Run Playwright tests
+        working-directory: ./frontend
+        run: npx playwright test
+
+      - name: Upload Playwright Report
+        uses: actions/upload-artifact@v4
+        if: ${{ !cancelled() }}
+        with:
+          name: playwright-report
+          path: frontend/playwright-report/
+          retention-days: 30
