@@ -38,9 +38,13 @@ jobs:
       - name: Wait for Keycloak
         run: |
           echo "Waiting for Keycloak to start..."
-          # Wait up to 60 seconds for Keycloak to respond on port 8080
-          timeout 60 bash -c 'until curl --output /dev/null --silent --head --fail http://localhost:8080; do printf "."; sleep 5; done'
+          # Wait up to 180 seconds for Keycloak to respond on port 8080
+          timeout 180 bash -c 'until curl --output /dev/null --silent --head --fail http://localhost:8080; do printf "."; sleep 5; done'
           echo "Keycloak is up!"
+
+      - name: Debug Keycloak Logs (on failure)
+        if: failure()
+        run: docker compose logs keycloak
 
       - name: Install Backend Dependencies
         working-directory: ./backend
