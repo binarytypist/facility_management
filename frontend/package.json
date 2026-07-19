@@ -21,7 +21,7 @@
     "@ngx-translate/core": "^18.0.0",
     "@ngx-translate/http-loader": "^18.0.0",
     "@primeuix/themes": "^2.0.3",
-    "keycloak-angular": "^22.0.0",
+    "keycloak-angular": "^21.0.0",
     "keycloak-js": "^26.2.4",
     "leaflet": "^1.9.4",
     "primeicons": "^7.0.0",
