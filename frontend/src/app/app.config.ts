@@ -14,6 +14,7 @@ import { GeoProvider } from './pages/map/providers/geo-provider';
 import { MockGeoService } from './pages/map/providers/mock-geo.service';
 import { MapApiProvider } from './pages/map/providers/map-api-provider';
 import { RestMapApiService } from './pages/map/providers/rest-map-api.service';
+import { environment } from '../environments/environment';
 
 export const appConfig: ApplicationConfig = {
   providers: [
@@ -52,9 +53,9 @@ export const appConfig: ApplicationConfig = {
     { provide: MapApiProvider, useClass: RestMapApiService },
     provideKeycloak({
       config: {
-        url: 'http://localhost:8080',
-        realm: 'geo-task-realm',
-        clientId: 'geo-task-web-client'
+        url: environment.keycloak.url,
+        realm: environment.keycloak.realm,
+        clientId: environment.keycloak.clientId
       },
       initOptions: {
         onLoad: 'login-required',
