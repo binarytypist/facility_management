@@ -1,6 +1,6 @@
 export const environment = {
   production: true,
-  apiUrl: '/api',
+  apiUrl: 'https://geo-task-app.duckdns.org/api',
   keycloak: {
     url: 'https://geo-task-app.duckdns.org',
     realm: 'geo-task-realm',
