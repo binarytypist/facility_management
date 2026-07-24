@@ -17,10 +17,20 @@ export async function middleware(request: NextRequest) {
   // Define routes that do NOT require authentication
   const publicRoutes = ['/api/login', '/api/register'];
 
+  const allowedOrigins = [
+    'http://localhost:4200',
+    'https://facility-management-binarytypists-projects.vercel.app',
+    'https://facility-management.vercel.app'
+  ];
+
+  const origin = request.headers.get('origin');
+  const allowedOrigin = origin && allowedOrigins.includes(origin) ? origin : 'http://localhost:4200';
+
   const corsHeaders = {
-    'Access-Control-Allow-Origin': 'http://localhost:4200',
+    'Access-Control-Allow-Origin': allowedOrigin,
     'Access-Control-Allow-Methods': 'GET, POST, PUT, DELETE, OPTIONS',
-    'Access-Control-Allow-Headers': 'Content-Type, Authorization',
+    'Access-Control-Allow-Headers': 'Content-Type, Authorization, x-user-id, x-user-name',
+    'Access-Control-Allow-Credentials': 'true',
   };
 
   if (request.method === 'OPTIONS') {
