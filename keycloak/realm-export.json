@@ -9,8 +9,19 @@
       "directAccessGrantsEnabled": true,
       "standardFlowEnabled": true,
       "implicitFlowEnabled": false,
-      "redirectUris": ["http://localhost:4200/*", "http://localhost:3000/*"],
-      "webOrigins": ["+", "http://localhost:4200", "http://localhost:3000"]
+      "redirectUris": [
+        "http://localhost:4200/*",
+        "http://localhost:3000/*",
+        "http://100.53.168.109:4200/*",
+        "http://100.53.168.109:3000/*"
+      ],
+      "webOrigins": [
+        "+",
+        "http://localhost:4200",
+        "http://localhost:3000",
+        "http://100.53.168.109:4200",
+        "http://100.53.168.109:3000"
+      ]
     },
     {
       "clientId": "geo-task-mobile-client",
@@ -19,46 +30,12 @@
       "directAccessGrantsEnabled": true,
       "standardFlowEnabled": true,
       "implicitFlowEnabled": false,
-      "redirectUris": ["*"],
-      "webOrigins": ["+"]
-    }
-  ],
-  "users": [
-    {
-      "username": "user",
-      "enabled": true,
-      "email": "user@geotask.com",
-      "firstName": "Standard",
-      "lastName": "User",
-      "credentials": [
-        {
-          "type": "password",
-          "value": "password",
-          "temporary": false
-        }
+      "redirectUris": [
+        "*"
       ],
-      "realmRoles": ["user"]
-    },
-    {
-      "username": "admin",
-      "enabled": true,
-      "email": "admin@geotask.com",
-      "firstName": "Admin",
-      "lastName": "User",
-      "credentials": [
-        {
-          "type": "password",
-          "value": "admin",
-          "temporary": false
-        }
-      ],
-      "realmRoles": ["admin"]
+      "webOrigins": [
+        "+"
+      ]
     }
-  ],
-  "roles": {
-    "realm": [
-      { "name": "admin", "description": "Administrator" },
-      { "name": "user", "description": "Standard User" }
-    ]
-  }
+  ]
 }

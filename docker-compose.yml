@@ -1,18 +1,40 @@
-version: '3.8'
+version: "3.8"
 
 services:
+
+  mysql:
+    image: mysql:8.0
+    container_name: facility-mysql
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: facility_management
+      MYSQL_USER: facility
+      MYSQL_PASSWORD: facility123
+    ports:
+      - "3306:3306"
+    volumes:
+      - mysql_data:/var/lib/mysql
+
   keycloak:
     image: quay.io/keycloak/keycloak:24.0.4
     container_name: keycloak
+    restart: always
     environment:
       KEYCLOAK_ADMIN: admin
       KEYCLOAK_ADMIN_PASSWORD: admin
       KC_DB: dev-file
-      KC_HEALTH_ENABLED: "true"
+      KC_HTTP_ENABLED: true
+      KC_PROXY_HEADERS: xforwarded
+      KC_HOSTNAME_STRICT: false
+      KC_HOSTNAME_STRICT_HTTPS: false
     ports:
       - "8080:8080"
-    command: 
+    command:
       - start-dev
       - --import-realm
     volumes:
       - ./keycloak/realm-export.json:/opt/keycloak/data/import/realm.json
+
+volumes:
+  mysql_data:
