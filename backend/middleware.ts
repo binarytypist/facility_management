@@ -2,15 +2,16 @@ import { NextResponse } from 'next/server';
 import type { NextRequest } from 'next/server';
 import * as jose from 'jose';
 
-// Adjust this URL to your Keycloak server. If running in Docker desktop on Windows, 
-// localhost usually works, but inside a container you might need host.docker.internal
-const KEYCLOAK_URL = process.env.KEYCLOAK_URL || 'http://localhost:8080';
+// The public URL that Keycloak includes in the JWT "iss" (issuer) claim
+const PUBLIC_KEYCLOAK_URL = process.env.KEYCLOAK_URL || 'https://geo-task-app.duckdns.org';
 const REALM = process.env.KEYCLOAK_REALM || 'geo-task-realm';
 
-const JWKS_URI = `http://127.0.0.1:8080/realms/${REALM}/protocol/openid-connect/certs`;
+// The local URL the backend uses to fetch the public keys to verify the signature.
+// Fetching locally on 127.0.0.1 prevents EC2 DNS hairpin/loopback routing issues.
+const LOCAL_JWKS_URI = `http://127.0.0.1:8080/realms/${REALM}/protocol/openid-connect/certs`;
 
 // Cache the JWKS using jose's built-in remote JWK set
-const JWKS = jose.createRemoteJWKSet(new URL(JWKS_URI));
+const JWKS = jose.createRemoteJWKSet(new URL(LOCAL_JWKS_URI));
 
 export async function middleware(request: NextRequest) {
   console.log(`[PROXY IN] ${request.method} ${request.nextUrl.pathname}`);
@@ -62,7 +63,7 @@ export async function middleware(request: NextRequest) {
     try {
       // Verify the JWT token
       const { payload } = await jose.jwtVerify(token, JWKS, {
-        issuer: `${KEYCLOAK_URL}/realms/${REALM}`,
+        issuer: `${PUBLIC_KEYCLOAK_URL}/realms/${REALM}`,
       });
 
       // Pass the user info to the API routes via headers
