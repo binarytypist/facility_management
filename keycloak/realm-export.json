@@ -13,14 +13,18 @@
         "http://localhost:4200/*",
         "http://localhost:3000/*",
         "http://100.53.168.109:4200/*",
-        "http://100.53.168.109:3000/*"
+        "http://100.53.168.109:3000/*",
+        "https://facility-management-binarytypists-projects.vercel.app/*",
+        "https://facility-management.vercel.app/*"
       ],
       "webOrigins": [
         "+",
         "http://localhost:4200",
         "http://localhost:3000",
         "http://100.53.168.109:4200",
-        "http://100.53.168.109:3000"
+        "http://100.53.168.109:3000",
+        "https://facility-management-binarytypists-projects.vercel.app",
+        "https://facility-management.vercel.app"
       ]
     },
     {
