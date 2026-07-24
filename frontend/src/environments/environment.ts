@@ -1,4 +1,9 @@
 export const environment = {
   production: false,
-  apiUrl: 'http://127.0.0.1:3000/api'
+  apiUrl: 'https://geo-task-app.duckdns.org/api',
+  keycloak: {
+    url: 'https://geo-task-app.duckdns.org',
+    realm: 'geo-task-realm',
+    clientId: 'geo-task-web-client'
+  }
 };
